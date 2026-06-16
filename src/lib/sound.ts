@@ -41,24 +41,25 @@ class SoundManagerClass {
     }
   }
 
-  private async ensureActive(): Promise<boolean> {
+  private ensureActive(): boolean {
     this.init();
     if (!this.ctx) return false;
     if (this.ctx.state === 'suspended') {
-      try {
-        await this.ctx.resume();
-      } catch (e) {
-        console.error("Failed to resume AudioContext", e);
-        return false;
-      }
+      this.ctx.resume().catch((e) => {
+        console.warn("Failed to resume AudioContext", e);
+      });
     }
     return true;
   }
 
-  public async setMuted(muted: boolean) {
+  // 最初のユーザーインタラクション時に安全に AudioContext を活性化するためのアンロックメソッド
+  public unlock() {
+    this.ensureActive();
+  }
+
+  public setMuted(muted: boolean) {
     this.isMutedState = muted;
-    const active = await this.ensureActive();
-    if (!active || !this.masterGain || !this.ctx) return;
+    if (!this.ensureActive() || !this.masterGain || !this.ctx) return;
 
     const targetVolume = muted ? 0 : 0.48; // 聴き取りやすい、心地よい音量に設定
     this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, this.ctx.currentTime);
@@ -74,9 +75,8 @@ class SoundManagerClass {
   }
 
   // クリック時のきらっとした高音 (三角波 + 短いリリースのきらきらベル音)
-  public async playClick() {
-    const active = await this.ensureActive();
-    if (!active || this.isMutedState || !this.masterGain || !this.ctx) return;
+  public playClick() {
+    if (!this.ensureActive() || this.isMutedState || !this.masterGain || !this.ctx) return;
     try {
       const now = this.ctx.currentTime;
       const osc = this.ctx.createOscillator();
@@ -98,9 +98,8 @@ class SoundManagerClass {
   }
 
   // お磨き中（きゅっきゅという短い、可愛いきらきら感のあるサインスイープ）
-  public async playPolish() {
-    const active = await this.ensureActive();
-    if (!active || this.isMutedState || !this.masterGain || !this.ctx) return;
+  public playPolish() {
+    if (!this.ensureActive() || this.isMutedState || !this.masterGain || !this.ctx) return;
     try {
       const now = this.ctx.currentTime;
       const osc = this.ctx.createOscillator();
@@ -124,9 +123,8 @@ class SoundManagerClass {
   }
 
   // キラキラ感のある完了音
-  public async playShine() {
-    const active = await this.ensureActive();
-    if (!active || this.isMutedState || !this.masterGain || !this.ctx) return;
+  public playShine() {
+    if (!this.ensureActive() || this.isMutedState || !this.masterGain || !this.ctx) return;
     try {
       const now = this.ctx.currentTime;
       // 3音のアルペジオが高速に立ち上がる
@@ -153,9 +151,8 @@ class SoundManagerClass {
   }
 
   // 結果発表時の、神秘的で豊かで壮大なクリスタルベルチャイム
-  public async playResult() {
-    const active = await this.ensureActive();
-    if (!active || this.isMutedState || !this.masterGain || !this.ctx) return;
+  public playResult() {
+    if (!this.ensureActive() || this.isMutedState || !this.masterGain || !this.ctx) return;
     try {
       const now = this.ctx.currentTime;
       // 美しい響きのGmaj9和音
@@ -183,15 +180,13 @@ class SoundManagerClass {
       });
     } catch {}
   }
-  public async startBGM() {
-    const active = await this.ensureActive();
-    if (!active || this.isMutedState) return;
-    await this.startBGMInternal();
+  public startBGM() {
+    if (!this.ensureActive() || this.isMutedState) return;
+    this.startBGMInternal();
   }
 
-  private async startBGMInternal() {
-    const active = await this.ensureActive();
-    if (!active || !this.ctx || !this.bgmGain) return;
+  private startBGMInternal() {
+    if (!this.ensureActive() || !this.ctx || !this.bgmGain) return;
     if (this.bgmIntervalId) return;
 
     // 和音フェードイン/アウトを 5秒ごとに繰り返すアンビエントシーケンサー
@@ -201,7 +196,7 @@ class SoundManagerClass {
       const duration = 6.0; // ひとつのコードの長さ (6秒)
       const chord = this.bgmChords[this.currentBgmChordIndex];
       
-      // 既存のBGM用オシレーターを消去
+      // 既存 of BGM用オシレーターを消去
       const oldOscs = [...this.bgmOscillators];
       this.bgmOscillators = [];
 

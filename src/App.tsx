@@ -22,10 +22,25 @@ export default function App() {
   const [isMuted, setIsMuted] = useState(true);
   const [stats, setStats] = useState<{ total: number, match1: number, match2: number, match3: number } | null>(null);
 
-  // 初回ロードなどの効果音処理
+  // 初回ロードなどの効果音処理と、ユーザーアクションでのWeb Audioロック解除
   useEffect(() => {
     // 状態を同期
     SoundManager.setMuted(isMuted);
+
+    // ユーザーの最初の操作で AudioContext を確実に活性化 (iOS / Android 対策)
+    const handleGesture = () => {
+      SoundManager.unlock();
+      // 一瞬アンロックが走ったらリスナーを削除する
+      window.removeEventListener('click', handleGesture);
+      window.removeEventListener('touchstart', handleGesture);
+    };
+    window.addEventListener('click', handleGesture, { passive: true });
+    window.addEventListener('touchstart', handleGesture, { passive: true });
+
+    return () => {
+      window.removeEventListener('click', handleGesture);
+      window.removeEventListener('touchstart', handleGesture);
+    };
   }, []);
 
   const preloadStats = async (mainId: string, subId: string, hiddenId: string) => {
