@@ -1,9 +1,10 @@
 import { useRef, useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { AnalysisResult, JewelResult } from '../types';
 import { Sparkles, Gem, Download, Share2, Home } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import JewelRecommendation from './JewelRecommendation';
+import { SoundManager } from '../lib/sound'; // SoundManager のインポートを追加
 
 interface ResultScreenProps {
   result: AnalysisResult;
@@ -19,6 +20,15 @@ export default function ResultScreen({ result, onRetry, preloadedStats }: Result
   const [isExporting, setIsExporting] = useState(false);
   const exportingRef = useRef(false);
   const [stats, setStats] = useState<{ total: number, match1: number, match2: number, match3: number } | null>(preloadedStats);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'warn' | 'info' } | null>(null);
+
+  // トースト自動消去
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   useEffect(() => {
     // すでにApp側で事前フェッチが完了していれば何もしない！
@@ -95,12 +105,14 @@ export default function ResultScreen({ result, onRetry, preloadedStats }: Result
         } catch (soundErr) {
           console.warn("Sound effect could not be played smoothly", soundErr);
         }
+
+        setToast({ message: '画像をアルバム/フォルダへダウンロード保存しました！✨', type: 'success' });
       } else {
         throw new Error("Generated image content is blank");
       }
     } catch (e) {
       console.error("Download failed to generate image smoothly", e);
-      alert('画像の生成に必要なデータの処理がタイムアウトしたか、ブラウザのセキュリティ設定により制限された可能性があります。画像が写真フォルダに保存されていない場合は、お手数ですが通常の画面表示のままスクリーンショットを撮影して保存してください！');
+      setToast({ message: '直接保存が難しい場合は、お手数ですがこのままスクリーンショットを撮影してアルバムに保存してください！💙', type: 'warn' });
     } finally {
       exportingRef.current = false;
       setIsExporting(false);
@@ -358,6 +370,26 @@ export default function ResultScreen({ result, onRetry, preloadedStats }: Result
           やり直す
         </button>
       </div>
+
+      {/* 美しいトーストメッセージ通知 */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className={`fixed bottom-24 left-1/2 -translate-x-1/2 z-50 p-4 rounded-2xl shadow-xl max-w-sm w-[90%] text-center text-xs tracking-wider border flex items-center justify-center gap-2 backdrop-blur-md ${
+              toast.type === 'success'
+                ? 'bg-emerald-950/85 text-emerald-300 border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.15)]'
+                : 'bg-indigo-950/90 text-indigo-300 border-indigo-750/50 shadow-[0_0_20px_rgba(99,102,241,0.2)]'
+            }`}
+          >
+            <Sparkles className="w-4 h-4 shrink-0 text-amber-300 animate-pulse" />
+            <span className="leading-relaxed">{toast.message}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

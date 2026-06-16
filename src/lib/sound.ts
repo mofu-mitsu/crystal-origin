@@ -183,23 +183,21 @@ class SoundManagerClass {
       });
     } catch {}
   }
-  public startBGM() {
-    this.init();
-    if (this.isMutedState) return;
-    this.startBGMInternal();
+  public async startBGM() {
+    const active = await this.ensureActive();
+    if (!active || this.isMutedState) return;
+    await this.startBGMInternal();
   }
 
-  private startBGMInternal() {
-    if (!this.ctx || !this.bgmGain) return;
+  private async startBGMInternal() {
+    const active = await this.ensureActive();
+    if (!active || !this.ctx || !this.bgmGain) return;
     if (this.bgmIntervalId) return;
-
-    if (this.ctx.state === 'suspended') {
-      this.ctx.resume();
-    }
 
     // 和音フェードイン/アウトを 5秒ごとに繰り返すアンビエントシーケンサー
     const triggerNextChord = () => {
-      const now = this.ctx!.currentTime;
+      if (this.isMutedState || !this.ctx || !this.bgmGain) return;
+      const now = this.ctx.currentTime;
       const duration = 6.0; // ひとつのコードの長さ (6秒)
       const chord = this.bgmChords[this.currentBgmChordIndex];
       
@@ -227,9 +225,7 @@ class SoundManagerClass {
           osc.type = 'sine'; // ピュアで神秘的な正弦波
           osc.frequency.setValueAtTime(freq, now);
 
-          // LFO接続処理はブラウザの互換性や例外リスクがあるため排除し、
-          // より安心・軽量かつ美しい調律を実現するために、デチューン属性を優しく設定します！
-          // これにより、天然水晶のようなゆらめき・デチューン和音を最も澄んだ音で奏でられます。
+          // 天然水晶のようなゆらめき・デチューン和音を最も澄んだ音で奏でられます。
           osc.detune.setValueAtTime((Math.random() - 0.5) * 8, now);
 
           gainNode.gain.setValueAtTime(0, now);
