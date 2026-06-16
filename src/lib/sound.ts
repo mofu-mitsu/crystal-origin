@@ -28,13 +28,13 @@ class SoundManagerClass {
       if (!AudioCtx) return;
       this.ctx = new AudioCtx();
       this.masterGain = this.ctx.createGain();
-      // デフォルトは消音状態に合わせる
-      this.masterGain.gain.setValueAtTime(this.isMutedState ? 0 : 0.25, this.ctx.currentTime);
+      // デフォルトは消音状態に合わせる。最大値を0.5にしてはっきり聞こえる音量感にする
+      this.masterGain.gain.setValueAtTime(this.isMutedState ? 0 : 0.5, this.ctx.currentTime);
       this.masterGain.connect(this.ctx.destination);
 
-      // BGM用ボリューム
+      // BGM用ボリューム (全体的にしっかり届く音量に変更)
       this.bgmGain = this.ctx.createGain();
-      this.bgmGain.gain.setValueAtTime(0.12, this.ctx.currentTime); // BGMは少し控えめに
+      this.bgmGain.gain.setValueAtTime(0.45, this.ctx.currentTime);
       this.bgmGain.connect(this.masterGain);
     } catch (e) {
       console.error("Failed to initialize Web Audio Context", e);
@@ -50,7 +50,7 @@ class SoundManagerClass {
       this.ctx.resume();
     }
 
-    const targetVolume = muted ? 0 : 0.22; // 自然な最大音量
+    const targetVolume = muted ? 0 : 0.48; // 聴き取りやすい、心地よい音量に設定
     this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, this.ctx.currentTime);
     this.masterGain.gain.linearRampToValueAtTime(targetVolume, this.ctx.currentTime + 0.3); // 0.3秒でなめらかにフェードイン/アウト
 
@@ -73,17 +73,17 @@ class SoundManagerClass {
       const gainNode = this.ctx.createGain();
 
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(1200, now);
-      osc.frequency.exponentialRampToValueAtTime(800, now + 0.15);
+      osc.frequency.setValueAtTime(1150, now);
+      osc.frequency.exponentialRampToValueAtTime(750, now + 0.2);
 
-      gainNode.gain.setValueAtTime(0.08, now);
-      gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      gainNode.gain.setValueAtTime(0.24, now);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
 
       osc.connect(gainNode);
       gainNode.connect(this.masterGain);
 
       osc.start(now);
-      osc.stop(now + 0.16);
+      osc.stop(now + 0.21);
     } catch {}
   }
 
@@ -98,18 +98,18 @@ class SoundManagerClass {
 
       osc.type = 'sine';
       // 磨く速度を表現するために少し上昇/下降する周波数
-      const baseFreq = 500 + Math.random() * 300;
+      const baseFreq = 480 + Math.random() * 240;
       osc.frequency.setValueAtTime(baseFreq, now);
-      osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.5, now + 0.08);
+      osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.4, now + 0.1);
 
-      gainNode.gain.setValueAtTime(0.05, now);
-      gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      gainNode.gain.setValueAtTime(0.18, now);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
 
       osc.connect(gainNode);
       gainNode.connect(this.masterGain);
 
       osc.start(now);
-      osc.stop(now + 0.1);
+      osc.stop(now + 0.13);
     } catch {}
   }
 
@@ -130,14 +130,14 @@ class SoundManagerClass {
         osc.frequency.setValueAtTime(freq, time);
 
         gainNode.gain.setValueAtTime(0.0, time);
-        gainNode.gain.linearRampToValueAtTime(0.06, time + 0.02);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.4);
+        gainNode.gain.linearRampToValueAtTime(0.16, time + 0.02);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.45);
 
         osc.connect(gainNode);
         gainNode.connect(this.masterGain!);
 
         osc.start(time);
-        osc.stop(time + 0.45);
+        osc.stop(time + 0.5);
       });
     } catch {}
   }
@@ -162,14 +162,14 @@ class SoundManagerClass {
         osc.frequency.setValueAtTime(freq, time);
 
         gainNode.gain.setValueAtTime(0.0, time);
-        gainNode.gain.linearRampToValueAtTime(0.04, time + 0.1);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, time + 2.5); // 2.5秒かけてゆっくり消える
+        gainNode.gain.linearRampToValueAtTime(0.11, time + 0.1);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, time + 2.8); // 2.8秒かけてゆっくり消える
 
         osc.connect(gainNode);
         gainNode.connect(this.masterGain!);
 
         osc.start(time);
-        osc.stop(time + 3.0);
+        osc.stop(time + 3.2);
       });
     } catch {}
   }
@@ -218,30 +218,20 @@ class SoundManagerClass {
           osc.type = 'sine'; // ピュアで神秘的な正弦波
           osc.frequency.setValueAtTime(freq, now);
 
-          // わずかな揺らぎ (モジュレーション) を加えて神秘性を出す
-          const lfo = this.ctx!.createOscillator();
-          const lfoGain = this.ctx!.createGain();
-          lfo.frequency.setValueAtTime(0.2 + Math.random() * 0.1, now); // とてもゆっくりなLFO
-          lfoGain.gain.setValueAtTime(0.7, now); // 揺らぎの幅
-          lfo.connect(lfoGain);
-          lfoGain.connect(osc.frequency);
-          lfo.start(now);
+          // LFO接続処理はブラウザの互換性や例外リスクがあるため排除し、
+          // より安心・軽量かつ美しい調律を実現するために、デチューン属性を優しく設定します！
+          // これにより、天然水晶のようなゆらめき・デチューン和音を最も澄んだ音で奏でられます。
+          osc.detune.setValueAtTime((Math.random() - 0.5) * 8, now);
 
           gainNode.gain.setValueAtTime(0, now);
-          // 2秒かけてゆっくりフェードイン
-          gainNode.gain.linearRampToValueAtTime(0.022, now + 2.0);
+          // 2秒かけてゆっくりフェードインして包み込む
+          gainNode.gain.linearRampToValueAtTime(0.065, now + 2.0);
 
           osc.connect(gainNode);
           gainNode.connect(this.bgmGain!);
 
           osc.start(now);
-          
           this.bgmOscillators.push({ osc, gain: gainNode });
-
-          // LFOクリーンアップ
-          setTimeout(() => {
-            try { lfo.stop(); } catch {}
-          }, (duration + 2) * 1000);
         } catch {}
       });
 

@@ -100,18 +100,19 @@ export function matchJewel(userParams: JewelParams, finalColor: { h: number, s: 
   // 1. メイン宝石とサブ宝石の決定 (ユークリッド距離 + 色距離)
   let distances = jewels.map(jewel => {
     // 4つの属性すべてを調和させるために4次元のパラメータ空間で距離を算出
+    // 2乗(2.0)にすることで負の数でも問題なくリアルな距離が計算できるように修正
     const paramDist = Math.sqrt(
-      Math.pow(jewel.idealParams.transparency - userParams.transparency, 1.8) +
-      Math.pow(jewel.idealParams.hardness - userParams.hardness, 1.8) +
-      Math.pow(jewel.idealParams.refractive - userParams.refractive, 1.8) +
-      Math.pow(jewel.idealParams.rarity - userParams.rarity, 1.8)
+      Math.pow(jewel.idealParams.transparency - userParams.transparency, 2) +
+      Math.pow(jewel.idealParams.hardness - userParams.hardness, 2) +
+      Math.pow(jewel.idealParams.refractive - userParams.refractive, 2) +
+      Math.pow(jewel.idealParams.rarity - userParams.rarity, 2)
     );
 
     const jewelHsl = hexToHsl(jewel.hexColor);
     const colorDist = colorDistance(finalColor, jewelHsl);
 
-    // 色へのマッチングとパラメータとの総合距離
-    const dist = paramDist + (colorDist * 0.7);
+    // 色へのマッチング精度を高めるため、色距離の比重を少し上げて1.5にする
+    const dist = paramDist + (colorDist * 1.5);
     return { jewel, dist };
   });
 

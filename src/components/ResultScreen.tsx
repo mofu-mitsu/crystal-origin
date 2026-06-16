@@ -57,12 +57,12 @@ export default function ResultScreen({ result, onRetry }: ResultScreenProps) {
     if (!target) return;
     setIsExporting(true);
     // レンダリング更新を待つ
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise(resolve => setTimeout(resolve, 350));
     try {
       const dataUrl = await toPng(target, {
         cacheBust: true,
         backgroundColor: '#020617',
-        pixelRatio: 2.5, // スマホでも崩れず、非常に高精細な解像度
+        pixelRatio: Math.min(2, window.devicePixelRatio || 2), // スマホでもクラッシュしない適正な標準高画質上限
         style: {
           transform: 'none',
           margin: '0',
@@ -70,16 +70,21 @@ export default function ResultScreen({ result, onRetry }: ResultScreenProps) {
           height: 'auto',
         }
       });
-      const a = document.createElement('a');
-      a.href = dataUrl;
-      a.download = `crystal-origin-${Date.now()}.png`;
-      a.click();
       
-      // 効果音を鳴らす
-      SoundManager.playShine();
+      if (dataUrl && dataUrl.length > 200) {
+        const a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = `crystal-origin-${Date.now()}.png`;
+        a.click();
+        
+        // 効果音を鳴らす
+        SoundManager.playShine();
+      } else {
+        throw new Error("Generated image content is blank");
+      }
     } catch (e) {
-      console.error(e);
-      alert('画像保存に失敗しました。');
+      console.error("Download failed to generate image smoothly", e);
+      alert('画像の生成に少し時間がかかるか、環境によってブロックされた可能性があります。画像が写真フォルダに保存されていない場合は、お手数ですがスクリーンショットを撮影して保存してくださいませ！');
     } finally {
       setIsExporting(false);
     }
@@ -274,7 +279,7 @@ export default function ResultScreen({ result, onRetry }: ResultScreenProps) {
                     </div>
                     <div className="flex justify-between items-center px-2">
                       <span>主と副が同じ人</span>
-                      <span className="font-medium text-indigo-300 text-sm">{stats.match1} 人</span>
+                      <span className="font-medium text-indigo-300 text-sm">{stats.match2} 人</span>
                     </div>
                     <div className="flex justify-between items-center px-2 border-b border-indigo-900/30 pb-3 mb-2">
                       <span>3種類すべて同じ人</span>
