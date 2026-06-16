@@ -1,0 +1,56 @@
+# Google Apps Script (GAS) コード
+# スプレッドシートに紐付いたスクリプトエディタに以下のコードを貼り付け、
+# 「ウェブアプリとして導入」して発行されたURLをアプリのVITE_GAS_URLに設定してください。
+
+function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  
+  // ヘッダーがなければ作成する
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["日時", "Main", "Sub", "Hidden"]);
+  }
+
+  var main = e.parameter.main || "unknown";
+  var sub = e.parameter.sub || "unknown";
+  var hidden = e.parameter.hidden || "unknown";
+  
+  var date = new Date();
+  
+  // 新しい鑑定結果を追記
+  sheet.appendRow([date, main, sub, hidden]);
+  
+  // 統計データの計算
+  var dataRange = sheet.getDataRange().getValues();
+  var total = dataRange.length - 1; // ヘッダー行を除く
+  if (total < 1) total = 1;
+
+  var match1 = 0; // 主結晶が同じ
+  var match2 = 0; // 主＋副が同じ
+  var match3 = 0; // 全部同じ
+
+  for (var i = 1; i < dataRange.length; i++) {
+    var row = dataRange[i];
+    if (row[1] == main) {
+      match1++;
+      // 主結晶が同じで、副結晶も同じ場合
+      if (row[2] == sub) {
+        match2++;
+        // すべて同じ場合
+        if (row[3] == hidden) {
+          match3++;
+        }
+      }
+    }
+  }
+  
+  var result = {
+    success: true,
+    total: total,
+    match1: match1,
+    match2: match2,
+    match3: match3
+  };
+  
+  return ContentService.createTextOutput(JSON.stringify(result))
+    .setMimeType(ContentService.MimeType.JSON);
+}
