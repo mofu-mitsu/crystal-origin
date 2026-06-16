@@ -31,44 +31,10 @@ export default function ResultScreen({ result, onRetry, preloadedStats }: Result
   }, [toast]);
 
   useEffect(() => {
-    // すでにApp側で事前フェッチが完了していれば何もしない！
     if (preloadedStats) {
       setStats(preloadedStats);
-      return;
     }
-
-    if (fetchedRef.current) return;
-    fetchedRef.current = true;
-
-    const fetchStats = async () => {
-      try {
-        const gasUrl = (import.meta as any).env?.VITE_GAS_URL || "https://script.google.com/macros/s/AKfycbwE4WxRj8N7aTQOM-OTUQuXT0jnOqIqhRKOgFrFsO1jhcQU2S-XPn-v1qzhAhMb6TWP/exec";
-        // 未設定の場合はデモ用のモックデータを表示する（もしURLが無効だった場合はフォールバック）
-        if (!gasUrl) {
-          setTimeout(() => {
-            setStats({ total: 1024, match1: 156, match2: 12, match3: 1 });
-          }, 1200);
-          return;
-        }
-
-        const url = new URL(gasUrl);
-        url.searchParams.append('main', mainJewel.id);
-        url.searchParams.append('sub', subJewel.id);
-        url.searchParams.append('hidden', hiddenJewel.id);
-
-        const res = await fetch(url.toString());
-        const data = await res.json();
-        if (data.success) {
-          setStats({ total: data.total, match1: data.match1, match2: data.match2, match3: data.match3 });
-        }
-      } catch (e) {
-        console.error("GAS fetch error", e);
-        // エラー時はフェールセーフとして読み込み中を解除し、モックか0を設定する
-        setStats({ total: 1, match1: 1, match2: 1, match3: 1 });
-      }
-    };
-    fetchStats();
-  }, [mainJewel.id, subJewel.id, hiddenJewel.id, preloadedStats]);
+  }, [preloadedStats]);
 
   const handleDownload = async () => {
     const target = captureRef.current;

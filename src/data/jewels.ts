@@ -990,5 +990,140 @@ export const jewels: JewelResult[] = [
     idealParams: { transparency: 10, hardness: 65, refractive: 30, rarity: 70 },
     colorType: "darkred",
     hexColor: "#A52A2A"
+  },
+  {
+    id: "beryl",
+    name: "ベリル",
+    subtitle: "純粋無垢な海と森のきらめき",
+    description: "アクアマリンやエメラルドの基本となる鉱物です。飾らない純粋な心を持ち、周囲の環境に自然と馴染むことができます。透明な優しさの持ち主です。",
+    idealParams: { transparency: 85, hardness: 75, refractive: 65, rarity: 50 },
+    colorType: "green",
+    hexColor: "#99cc99"
+  },
+  {
+    id: "phosphophyllite",
+    name: "フォスフォフィライト",
+    subtitle: "儚くも美しい薄荷の輝き",
+    description: "脆く壊れやすい性質と引き換えに、息を呑むような美しさを放ちます。非常に繊細なアンテナと高い芸術的センスを持ち、一部の熱狂的なファンを惹きつけます。",
+    idealParams: { transparency: 75, hardness: 15, refractive: 80, rarity: 95 },
+    colorType: "cyan",
+    hexColor: "#ABDFE0"
+  },
+  {
+    id: "sakuraagate",
+    name: "サクラアゲート",
+    subtitle: "石に咲き誇る永遠の春",
+    description: "内側に桜の花びらのような模様を宿した、心安らぐ石です。どんな環境でも自分のペースを守り、優しく花を咲かせるような大らかな受容力を持っています。",
+    idealParams: { transparency: 30, hardness: 65, refractive: 30, rarity: 60 },
+    colorType: "pink",
+    hexColor: "#F4BABA"
+  },
+  {
+    id: "okenite",
+    name: "オケナイト",
+    subtitle: "心を撫でる純白のうさぎ",
+    description: "石でありながらウサギの尻尾のようなふわふわの針状結晶を持つ不思議な存在。人を無条件で癒すオーラを放ち、争いを好まない究極の平和主義者です。",
+    idealParams: { transparency: 0, hardness: 10, refractive: 10, rarity: 75 },
+    colorType: "white",
+    hexColor: "#F8F8FF"
+  },
+  {
+    id: "rainbowmoonstone",
+    name: "レインボームーンストーン",
+    subtitle: "夜空に浮かぶ七色の導き",
+    description: "白い光の奥に七色の輝き（シラー）を秘めています。直感力とインスピレーションが高く、迷いの中でふと正しい道を見つけ出す不思議な力を持っています。",
+    idealParams: { transparency: 60, hardness: 60, refractive: 75, rarity: 65 },
+    colorType: "clear",
+    hexColor: "#E0FFFF"
+  },
+  {
+    id: "fireopal",
+    name: "ファイアオパール",
+    subtitle: "情熱を燃やす炎の滴",
+    description: "内側からメラメラと燃えるような強い輝きを放ちます。感情豊かで情熱的、一度火がつくととことん突き進む圧倒的な行動力の持ち主です。",
+    idealParams: { transparency: 50, hardness: 55, refractive: 80, rarity: 80 },
+    colorType: "orange",
+    hexColor: "#FF7F00"
+  },
+  {
+    id: "indigolite",
+    name: "インディゴライト",
+    subtitle: "深海のような蒼き知性",
+    description: "ブルートルマリンの一種で、蒼く深い色合いが特徴です。物事を論理的かつ冷静に分析し、表面的なことに惑わされず真実を見抜く深い知性の持ち主です。",
+    idealParams: { transparency: 75, hardness: 75, refractive: 70, rarity: 85 },
+    colorType: "blue",
+    hexColor: "#004B87"
+  },
+  {
+    id: "lemonquartz",
+    name: "レモンクォーツ",
+    subtitle: "心身を清める弾ける果実",
+    description: "爽やかなレモンカラーが、心と体の疲れを優しく解きほぐします。常にフレッシュな視点を持ち、周囲に爽やかな風を吹き込むムードメーカーです。",
+    idealParams: { transparency: 85, hardness: 70, refractive: 65, rarity: 40 },
+    colorType: "yellow",
+    hexColor: "#FFFACD"
+  },
+  {
+    id: "tsavorite",
+    name: "ツァボライト",
+    subtitle: "溢れる生命の鮮緑",
+    description: "生き生きとした鮮烈な緑色が特徴的なガーネット。活力と生命力に満ち溢れ、常に前向きなエネルギーで新しい挑戦を恐れずに楽しむタイプです。",
+    idealParams: { transparency: 80, hardness: 75, refractive: 80, rarity: 80 },
+    colorType: "green",
+    hexColor: "#228B22"
+  },
+  {
+    id: "goshenite",
+    name: "ゴシェナイト",
+    subtitle: "無色透明な究極のクリア",
+    description: "一切の色を持たない純粋なベリル。先入観や偏見がなく、あらゆる物事をありのままに受け入れるフラットで澄み切った心を持っています。",
+    idealParams: { transparency: 95, hardness: 75, refractive: 60, rarity: 65 },
+    colorType: "clear",
+    hexColor: "#FFFFFF"
+  },
+  {
+    id: "blackdiamond",
+    name: "ブラックダイヤモンド",
+    subtitle: "絶対的な強さを誇る漆黒",
+    description: "光を全て吸収する黒いダイヤモンド。他人の意見に流されない絶対的な芯の強さと、圧倒的な威厳でカリスマ的なリーダーシップを発揮します。",
+    idealParams: { transparency: 5, hardness: 100, refractive: 20, rarity: 90 },
+    colorType: "black",
+    hexColor: "#111111"
+  },
+  {
+    id: "musgravite",
+    name: "マスグラバイト",
+    subtitle: "世界を揺るがす紫の奇跡",
+    description: "ターフェアイトと並び称される世界有数の超希少石。ミステリアスな雰囲気を纏い、常人には思いつかないような特異な才能を秘めた天才肌です。",
+    idealParams: { transparency: 85, hardness: 80, refractive: 75, rarity: 100 },
+    colorType: "purple",
+    hexColor: "#665D69"
+  },
+  {
+    id: "candyfluorite",
+    name: "キャンディーフローライト",
+    subtitle: "発想が踊る魔法の縞模様",
+    description: "紫、緑、ピンクなどが入り混じる天才の石。型にはまらない自由な発想力で、次々と面白いアイデアを生み出すクリエイティブな才能に溢れています。",
+    idealParams: { transparency: 65, hardness: 40, refractive: 50, rarity: 50 },
+    colorType: "multi",
+    hexColor: "#DDA0DD"
+  },
+  {
+    id: "azurite",
+    name: "アズライト",
+    subtitle: "宇宙の理を覗く真実の青",
+    description: "第三の目を活性化させると言われる神秘の石。深い洞察力と直感を備え、物事の根本や本質、隠された真実を瞬時に見抜く凄まじい眼力を持っています。",
+    idealParams: { transparency: 10, hardness: 35, refractive: 30, rarity: 60 },
+    colorType: "blue",
+    hexColor: "#003399"
+  },
+  {
+    id: "jeremejevite",
+    name: "ジェレメジェバイト（エレメーエファイト）",
+    subtitle: "気高き氷の王の微笑み",
+    description: "世界中のコレクターが血眼になって探す幻の石。クールで近寄りがたい雰囲気を持ちながらも、内面には澄み切った純粋で美しい精神を宿しています。",
+    idealParams: { transparency: 90, hardness: 75, refractive: 65, rarity: 100 },
+    colorType: "blue",
+    hexColor: "#A9C9DD"
   }
 ];
