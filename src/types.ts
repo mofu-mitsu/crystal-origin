@@ -6,6 +6,7 @@ export interface InteractionData {
   finalColor: { h: number; s: number; l: number }; // h: 0-360, s: 0-100, l: 0-100
   polishTimeMs: number;
   polishCount: number;
+  butterflyClicks?: number; // 新規追加: 蝶のタップ数
 }
 
 export interface JewelParams {

@@ -1125,5 +1125,50 @@ export const jewels: JewelResult[] = [
     idealParams: { transparency: 90, hardness: 75, refractive: 65, rarity: 100 },
     colorType: "blue",
     hexColor: "#A9C9DD"
+  },
+  {
+    id: "cubiczirconia",
+    name: "キュービックジルコニア",
+    subtitle: "完璧を創り出す人工の輝き",
+    description: "人間の手で生み出された、ダイヤモンドにも劣らない輝きを持つ人工石。環境に左右されず、常に安定して高いパフォーマンスを発揮する完璧さを持ちます。",
+    idealParams: { transparency: 95, hardness: 80, refractive: 90, rarity: 10 },
+    colorType: "clear",
+    hexColor: "#FFFFFF"
+  },
+  {
+    id: "tantalite",
+    name: "タンタライト",
+    subtitle: "大地に根を下ろす黒鉄",
+    description: "ずっしりとした重みを持つ黒い鉱物。どんな困難や逆風にも負けず、地に足を着けて確実に一歩ずつ前進する、極めて現実的で忍耐強い性格です。",
+    idealParams: { transparency: 5, hardness: 65, refractive: 20, rarity: 80 },
+    colorType: "black",
+    hexColor: "#222222"
+  },
+  {
+    id: "tigerseye",
+    name: "タイガーアイ",
+    subtitle: "未来を見通す虎の眼",
+    description: "光の筋が虎の目を感じさせる石。シャープな洞察力と決断力を持ち、ビジネスや勝負事でここぞというチャンスを絶対に逃さない勝負強さがあります。",
+    idealParams: { transparency: 10, hardness: 70, refractive: 40, rarity: 20 },
+    colorType: "brown",
+    hexColor: "#A0522D"
+  },
+  {
+    id: "staurolite",
+    name: "スタウロライト",
+    subtitle: "交差する運命の十字星",
+    description: "自然が作り出した十字架の形をした神秘的な石（十字石）。強い信念と信仰心を持ち、異なる価値観を交差させて新しいものを生み出す力があります。",
+    idealParams: { transparency: 5, hardness: 75, refractive: 15, rarity: 75 },
+    colorType: "brownred",
+    hexColor: "#8B4513"
+  },
+  {
+    id: "chrysoberyl",
+    name: "クリソベリル",
+    subtitle: "凛と輝く黄金の気品",
+    description: "希少なアレキサンドライトやキャッツアイの基本となる高貴な石。洗練された知性と品格を兼ね備え、周囲を静かに導くような落ち着いたリーダーシップを持ちます。",
+    idealParams: { transparency: 85, hardness: 85, refractive: 75, rarity: 65 },
+    colorType: "yellowgreen",
+    hexColor: "#BDB76B"
   }
 ];

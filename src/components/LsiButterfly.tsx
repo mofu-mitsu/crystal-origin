@@ -12,7 +12,7 @@ const lsiQuotes = [
   "興味深い。引き続き観察を続けます。",
 ];
 
-export default function LsiButterfly() {
+export default function LsiButterfly({ onTap }: { onTap?: () => void }) {
   const [position, setPosition] = useState({ x: -100, y: 100 });
   const [isVisible, setIsVisible] = useState(false);
   const [quote, setQuote] = useState<string | null>(null);
@@ -76,6 +76,7 @@ export default function LsiButterfly() {
   }, [isVisible]);
 
   const handleClick = () => {
+    if (onTap) onTap();
     if (quote) return;
     const randomQuote = lsiQuotes[Math.floor(Math.random() * lsiQuotes.length)];
     setQuote(randomQuote);

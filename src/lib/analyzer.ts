@@ -48,7 +48,6 @@ function colorDistance(hsl1: { h: number, s: number, l: number }, hsl2: { h: num
 export function calculateParams(data: InteractionData): JewelParams {
   // 1. 透明度 (Transparency): 迷いのなさ、素直さ
   // クリック数が少なく、色が明るい（明度Lが高い）ほど透明度が高い
-  // 磨く時間や磨く回数は「磨いて不純物を取り除く」として透明度にプラスに働く
   const clickFactorT = Math.max(0, 100 - data.clickCount * 2);
   const lightnessFactor = data.finalColor.l;
   const polishTBonus = Math.min(15, data.polishCount * 0.05); // 磨いた分だけ少し透明感アップ
@@ -58,11 +57,11 @@ export function calculateParams(data: InteractionData): JewelParams {
   // 2. 硬度 (Hardness): 精神的タフさ、折れない心、努力の量
   // 磨いた時間と回数が硬度（タフさ）を大きく底上げする
   const timeSeconds = data.timeSpentMs / 1000;
-  const timeScore = Math.min(100, (timeSeconds / 120) * 100);
-  const distanceScore = Math.min(100, (data.mouseDistance / 6000) * 100); // すこし敷居を下げて感度を良く
-  const polishScore = Math.min(100, (data.polishCount / 150) * 100); // 150回磨いたら満点
+  const timeScore = Math.min(100, (timeSeconds / 180) * 100); 
+  const distanceScore = Math.min(100, (data.mouseDistance / 5000) * 100); 
+  const polishScore = Math.min(100, (data.polishCount / 200) * 100); // 200回磨いたら満点に修正してキャンディーフローライト等に出やすくする
   
-  let hardness = Math.round((timeScore * 0.25) + (distanceScore * 0.25) + (polishScore * 0.5));
+  let hardness = Math.round((timeScore * 0.2) + (distanceScore * 0.3) + (polishScore * 0.5));
 
   // 3. 屈折率 (Refractive): 多角的な視点、迷いやすさ・好奇心
   // カラー変更回数、クリック数が多いほど多角的に物事を見ている
@@ -70,10 +69,10 @@ export function calculateParams(data: InteractionData): JewelParams {
   const clickFactorR = Math.min(100, data.clickCount * 5);
   const refractive = Math.round((colorChangeScore * 0.6) + (clickFactorR * 0.4));
 
-  // 4. 希少性 (Rarity): 変わり者度、極端さ
-  // 各パラメータが極端に高いか低い場合、希少性が上がる
+  // 4. 希少性 (Rarity): 変わり者度、極端さ、または隠し要素（蝶）の発見！
+  // 各パラメータが極端に高いか低い場合、または蝶をクリックした場合に希少性が上がる
   const isExtreme = (val: number) => Math.abs(val - 50) * 2; // 50から離れるほど高い (0~100)
-  const extremeH = isExtreme(data.finalColor.h / 3.6); // 色の特異性
+  const extremeH = isExtreme(data.finalColor.h / 3.6);
   const extremeS = isExtreme(data.finalColor.s);
   const extremeL = isExtreme(data.finalColor.l);
   
@@ -82,8 +81,10 @@ export function calculateParams(data: InteractionData): JewelParams {
   if (timeSeconds < 6 && data.clickCount > 8) anomalyScore += 35; // 連打
   if (data.finalColor.s === 100 && data.finalColor.l === 50) anomalyScore += 20; // 原色
   if (data.polishCount > 300) anomalyScore += 45; // たくさん磨いたご褒美
+  
+  const butterflyBonus = Math.min(60, (data.butterflyClicks || 0) * 20); // 蝶1回で+20%レア度。最大60！
 
-  const rarity = Math.min(100, Math.round((extremeH * 0.2 + extremeS * 0.25 + extremeL * 0.25 + anomalyScore)));
+  const rarity = Math.min(100, Math.round((extremeH * 0.15 + extremeS * 0.2 + extremeL * 0.15 + anomalyScore * 0.5 + butterflyBonus)));
 
   return {
     transparency: clamp(transparency, 0, 100),

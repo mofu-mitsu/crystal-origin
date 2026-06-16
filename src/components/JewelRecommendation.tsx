@@ -24,17 +24,20 @@ export default function JewelRecommendation({ jewelName }: JewelRecommendationPr
         
         // "(〜)" などの補足表記を消して検索精度を上げる（例：モリオン（黒水晶） -> モリオン）
         const pureName = jewelName.split('（')[0].split('(')[0].trim();
-        let searchKeyword = pureName + " ジュエリー";
+        let searchKeyword = pureName; // "ジュエリー"で絞ると出ない希少石が多いため、石の直名で広く探す
         
-        // まずはジュエリーとして検索
+        // まずは宝石の直名で検索
         let res = await fetch(`https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?applicationId=${appId}&keyword=${encodeURIComponent(searchKeyword)}&hits=3&format=json&sort=standard`);
         let data = await res.json();
         
-        // ヒットしなかった場合は、ルースや原石など広い範囲で検索する（レアストーン対策）
+        // ヒットしなかった場合、装飾語を消して再検索（例: キャンディーフローライト -> フローライト）
         if (!data.Items || data.Items.length === 0) {
-          searchKeyword = pureName; // "ジュエリー" を除外
-          res = await fetch(`https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?applicationId=${appId}&keyword=${encodeURIComponent(searchKeyword)}&hits=3&format=json&sort=standard`);
-          data = await res.json();
+          const simplifiedName = pureName.replace(/(キャンディー|スター|レインボー|ウォーターメロン|インペリアル|パライバ|バイカラー|ブラック)/g, "");
+          if (simplifiedName !== pureName && simplifiedName.length > 0) {
+            await new Promise(resolve => setTimeout(resolve, 500)); // APIレートリミット対策
+            res = await fetch(`https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?applicationId=${appId}&keyword=${encodeURIComponent(simplifiedName)}&hits=3&format=json&sort=standard`);
+            data = await res.json();
+          }
         }
         
         if (data.Items) {

@@ -22,6 +22,7 @@ export default function App() {
   const [isMuted, setIsMuted] = useState(true);
   const [stats, setStats] = useState<{ total: number, match1: number, match2: number, match3: number } | null>(null);
   const fetchingRef = useRef(false);
+  const butterflyClicksRef = useRef(0);
 
   // 初回ロードなどの効果音処理と、ユーザーアクションでのWeb Audioロック解除
   useEffect(() => {
@@ -96,12 +97,19 @@ export default function App() {
     setScreen('polish');
   };
 
+  const handleButterflyClick = () => {
+    butterflyClicksRef.current += 1;
+  };
+
   const handlePolishComplete = (data: InteractionData) => {
     // 磨き完了時にきらきらと輝くサウンド！
     SoundManager.playShine();
     
-    const params = calculateParams(data);
-    const analysisResult = matchJewel(params, data.finalColor);
+    // 蝶のタップ数をデータに追加
+    const enrichedData = { ...data, butterflyClicks: butterflyClicksRef.current };
+
+    const params = calculateParams(enrichedData);
+    const analysisResult = matchJewel(params, enrichedData.finalColor);
     setResult(analysisResult);
     setScreen('processing');
 
@@ -122,12 +130,13 @@ export default function App() {
     setResult(null);
     setStats(null); // ロード済みのキャッシュ統計をクリア
     fetchingRef.current = false;
+    butterflyClicksRef.current = 0; // 蝶のタップ数もリセット
     setScreen('start');
   };
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50 font-sans selection:bg-slate-700 overflow-x-hidden">
-      {screen !== 'result' && <LsiButterfly />}
+      {screen !== 'result' && <LsiButterfly onTap={handleButterflyClick} />}
       
       {/* 美しいミュート/スピーカー切り替えフローティングボタン */}
       <div className="fixed top-6 right-6 z-50 flex items-center gap-3">
