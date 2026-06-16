@@ -8,17 +8,24 @@ import JewelRecommendation from './JewelRecommendation';
 interface ResultScreenProps {
   result: AnalysisResult;
   onRetry: () => void;
+  preloadedStats: { total: number, match1: number, match2: number, match3: number } | null;
 }
 
-export default function ResultScreen({ result, onRetry }: ResultScreenProps) {
+export default function ResultScreen({ result, onRetry, preloadedStats }: ResultScreenProps) {
   const { mainJewel, subJewel, hiddenJewel, userParams } = result;
   const resultRef = useRef<HTMLDivElement>(null);
   const captureRef = useRef<HTMLDivElement>(null); // 隠しキャプチャ用
   const fetchedRef = useRef(false);
   const [isExporting, setIsExporting] = useState(false);
-  const [stats, setStats] = useState<{ total: number, match1: number, match2: number, match3: number } | null>(null);
+  const [stats, setStats] = useState<{ total: number, match1: number, match2: number, match3: number } | null>(preloadedStats);
 
   useEffect(() => {
+    // すでにApp側で事前フェッチが完了していれば何もしない！
+    if (preloadedStats) {
+      setStats(preloadedStats);
+      return;
+    }
+
     if (fetchedRef.current) return;
     fetchedRef.current = true;
 
@@ -50,10 +57,10 @@ export default function ResultScreen({ result, onRetry }: ResultScreenProps) {
       }
     };
     fetchStats();
-  }, [mainJewel.id, subJewel.id, hiddenJewel.id]);
+  }, [mainJewel.id, subJewel.id, hiddenJewel.id, preloadedStats]);
 
   const handleDownload = async () => {
-    const target = captureRef.current || resultRef.current;
+    const target = captureRef.current;
     if (!target) return;
     setIsExporting(true);
     // レンダリング更新を待つ
@@ -62,12 +69,15 @@ export default function ResultScreen({ result, onRetry }: ResultScreenProps) {
       const dataUrl = await toPng(target, {
         cacheBust: true,
         backgroundColor: '#020617',
-        pixelRatio: Math.min(2, window.devicePixelRatio || 2), // スマホでもクラッシュしない適正な標準高画質上限
+        pixelRatio: Math.min(2, window.devicePixelRatio || 2), // スマホでも崩れず高画質な適正上限
         style: {
           transform: 'none',
           margin: '0',
           width: '1024px',
           height: 'auto',
+          opacity: '1',
+          zIndex: '9999',
+          visibility: 'visible'
         }
       });
       
@@ -84,7 +94,7 @@ export default function ResultScreen({ result, onRetry }: ResultScreenProps) {
       }
     } catch (e) {
       console.error("Download failed to generate image smoothly", e);
-      alert('画像の生成に少し時間がかかるか、環境によってブロックされた可能性があります。画像が写真フォルダに保存されていない場合は、お手数ですがスクリーンショットを撮影して保存してくださいませ！');
+      alert('画像の生成に必要なデータの処理がタイムアウトしたか、ブラウザのセキュリティ設定により制限された可能性があります。画像が写真フォルダに保存されていない場合は、お手数ですが通常の画面表示のままスクリーンショットを撮影して保存してください！');
     } finally {
       setIsExporting(false);
     }
@@ -235,9 +245,12 @@ export default function ResultScreen({ result, onRetry }: ResultScreenProps) {
       </div>
 
       {/* ========================================================= */}
-      {/* 隠しキャプチャ専用コンテナ (常に1024px幅の横長デスクトップ配置をキープ) */}
+      {/* キャプチャ専用配置 (ブラウザの描画をスキップされないよう、画面ツリー内で不透明度0かつ最深層に配置) */}
       {/* ========================================================= */}
-      <div className="absolute left-[-9999px] top-0 pointer-events-none" style={{ width: '1024px' }}>
+      <div 
+        className="absolute top-0 left-0 opacity-0 pointer-events-none -z-50" 
+        style={{ width: '1024px', transform: 'scale(0.01)', transformOrigin: 'top left' }}
+      >
         <div 
           ref={captureRef} 
           className="p-8 bg-slate-950 rounded-3xl overflow-hidden border border-slate-900"

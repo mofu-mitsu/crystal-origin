@@ -20,6 +20,7 @@ export default function App() {
   const [interactData, setInteractData] = useState<Omit<InteractionData, 'polishTimeMs' | 'polishCount'> | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [isMuted, setIsMuted] = useState(true);
+  const [stats, setStats] = useState<{ total: number, match1: number, match2: number, match3: number } | null>(null);
 
   // 初回ロードなどの効果音処理
   useEffect(() => {
@@ -27,17 +28,39 @@ export default function App() {
     SoundManager.setMuted(isMuted);
   }, []);
 
+  const preloadStats = async (mainId: string, subId: string, hiddenId: string) => {
+    try {
+      const gasUrl = (import.meta as any).env?.VITE_GAS_URL || "https://script.google.com/macros/s/AKfycbwE4WxRj8N7aTQOM-OTUQuXT0jnOqIqhRKOgFrFsO1jhcQU2S-XPn-v1qzhAhMb6TWP/exec";
+      if (!gasUrl) {
+        setStats({ total: 1024, match1: 156, match2: 12, match3: 1 });
+        return;
+      }
+      const url = new URL(gasUrl);
+      url.searchParams.append('main', mainId);
+      url.searchParams.append('sub', subId);
+      url.searchParams.append('hidden', hiddenId);
+
+      const res = await fetch(url.toString());
+      const data = await res.json();
+      if (data.success) {
+        setStats({ total: data.total, match1: data.match1, match2: data.match2, match3: data.match3 });
+      }
+    } catch (e) {
+      console.error("GAS preload error", e);
+      // フォールバック
+      setStats({ total: 1, match1: 1, match2: 1, match3: 1 });
+    }
+  };
+
   const handleToggleMute = () => {
     const nextMuted = !isMuted;
     setIsMuted(nextMuted);
     SoundManager.setMuted(nextMuted);
     
-    // ミュート解除の瞬間にきらりとした音階を鳴らす
+    // 同期的に呼び出し可能にして、Safari等の非同期ブラウザセキュリティブロックを排除する
     if (!nextMuted) {
-      setTimeout(() => {
-        SoundManager.playClick();
-        SoundManager.startBGM();
-      }, 50);
+      SoundManager.playClick();
+      SoundManager.startBGM();
     } else {
       SoundManager.stopBGM();
     }
@@ -63,6 +86,9 @@ export default function App() {
     const analysisResult = matchJewel(params, data.finalColor);
     setResult(analysisResult);
     setScreen('processing');
+
+    // お磨き完了 & Processing中の約3〜4秒間に裏で統計情報を事前ロード！
+    preloadStats(analysisResult.mainJewel.id, analysisResult.subJewel.id, analysisResult.hiddenJewel.id);
   };
 
   const handleProcessingFinish = () => {
@@ -73,8 +99,10 @@ export default function App() {
   
   const handleRetry = () => {
     SoundManager.playClick();
+    SoundManager.stopBGM(); // リトライはBGMを一回綺麗にストップ
     setInteractData(null);
     setResult(null);
+    setStats(null); // ロード済みのキャッシュ統計をクリア
     setScreen('start');
   };
 
@@ -107,7 +135,7 @@ export default function App() {
         {screen === 'interact' && <InteractionScreen key="interact" onComplete={handleInteractionComplete} />}
         {screen === 'polish' && interactData && <PolishingScreen key="polish" initialData={interactData} onComplete={handlePolishComplete} />}
         {screen === 'processing' && <ProcessingScreen key="processing" onFinish={handleProcessingFinish} />}
-        {screen === 'result' && result && <ResultScreen key="result" result={result} onRetry={handleRetry} />}
+        {screen === 'result' && result && <ResultScreen key="result" result={result} onRetry={handleRetry} preloadedStats={stats} />}
       </AnimatePresence>
     </div>
   );

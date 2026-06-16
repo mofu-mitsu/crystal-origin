@@ -68,6 +68,9 @@ class SoundManagerClass {
     this.init();
     if (!this.ctx || this.isMutedState || !this.masterGain) return;
     try {
+      if (this.ctx.state === 'suspended') {
+        this.ctx.resume();
+      }
       const now = this.ctx.currentTime;
       const osc = this.ctx.createOscillator();
       const gainNode = this.ctx.createGain();
@@ -92,6 +95,9 @@ class SoundManagerClass {
     this.init();
     if (!this.ctx || this.isMutedState || !this.masterGain) return;
     try {
+      if (this.ctx.state === 'suspended') {
+        this.ctx.resume();
+      }
       const now = this.ctx.currentTime;
       const osc = this.ctx.createOscillator();
       const gainNode = this.ctx.createGain();
@@ -118,6 +124,9 @@ class SoundManagerClass {
     this.init();
     if (!this.ctx || this.isMutedState || !this.masterGain) return;
     try {
+      if (this.ctx.state === 'suspended') {
+        this.ctx.resume();
+      }
       const now = this.ctx.currentTime;
       // 3音のアルペジオが高速に立ち上がる
       const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
@@ -147,6 +156,9 @@ class SoundManagerClass {
     this.init();
     if (!this.ctx || this.isMutedState || !this.masterGain) return;
     try {
+      if (this.ctx.state === 'suspended') {
+        this.ctx.resume();
+      }
       const now = this.ctx.currentTime;
       // 美しい響きのGmaj9和音
       const rootChords = [195.99, 293.66, 369.99, 440.00, 587.33, 739.99, 880.00]; // G3, D4, F#4, A4, D5, F#5, A5
