@@ -31,14 +31,15 @@ function colorDistance(hsl1: { h: number, s: number, l: number }, hsl2: { h: num
   const sDiff = Math.abs(hsl1.s - hsl2.s);
   const lDiff = Math.abs(hsl1.l - hsl2.l);
 
-  const isAchromatic1 = hsl1.s < 20 || hsl1.l < 20 || hsl1.l > 85;
-  const isAchromatic2 = hsl2.s < 20 || hsl2.l < 20 || hsl2.l > 85;
+  // パステルカラー（ピンクなど）が白判定されないよう、無彩色の閾値を厳しくする
+  const isAchromatic1 = hsl1.s < 12 || hsl1.l < 12 || hsl1.l > 95;
+  const isAchromatic2 = hsl2.s < 12 || hsl2.l < 12 || hsl2.l > 95;
 
   if (isAchromatic1 || isAchromatic2) {
-    return (sDiff * 1.5) + (lDiff * 2.0); // 無彩色は彩度と明度の差を重視
+    return (sDiff * 1.5) + (lDiff * 2.5); // 無彩色は彩度と明度の差を重視
   }
 
-  return (hScore * 2.5) + (sDiff * 0.5) + (lDiff * 0.5); // 有彩色は色相の差を最重視
+  return (hScore * 3.0) + (sDiff * 0.4) + (lDiff * 0.4); // 有彩色は色相の差を最重視
 }
 
 /**
@@ -47,26 +48,27 @@ function colorDistance(hsl1: { h: number, s: number, l: number }, hsl2: { h: num
 export function calculateParams(data: InteractionData): JewelParams {
   // 1. 透明度 (Transparency): 迷いのなさ、素直さ
   // クリック数が少なく、色が明るい（明度Lが高い）ほど透明度が高い
-  // また、磨きすぎ（polishCount大）は「加工された」として少し透明度が下がる（素のままではない）
-  const clickFactorT = Math.max(0, 100 - data.clickCount * 3);
+  // 磨く時間や磨く回数は「磨いて不純物を取り除く」として透明度にプラスに働く
+  const clickFactorT = Math.max(0, 100 - data.clickCount * 2);
   const lightnessFactor = data.finalColor.l;
-  let transparency = Math.round((clickFactorT * 0.4) + (lightnessFactor * 0.6));
-  transparency -= (data.polishCount * 0.05);
+  const polishTBonus = Math.min(15, data.polishCount * 0.05); // 磨いた分だけ少し透明感アップ
+  
+  let transparency = Math.round((clickFactorT * 0.4) + (lightnessFactor * 0.6) + polishTBonus);
 
   // 2. 硬度 (Hardness): 精神的タフさ、折れない心、努力の量
   // 磨いた時間と回数が硬度（タフさ）を大きく底上げする
   const timeSeconds = data.timeSpentMs / 1000;
-  const timeScore = Math.min(100, (timeSeconds / 180) * 100);
-  const distanceScore = Math.min(100, (data.mouseDistance / 10000) * 100);
-  const polishScore = Math.min(100, (data.polishCount / 500) * 100); // 500回磨いたらMax追加
+  const timeScore = Math.min(100, (timeSeconds / 120) * 100);
+  const distanceScore = Math.min(100, (data.mouseDistance / 6000) * 100); // すこし敷居を下げて感度を良く
+  const polishScore = Math.min(100, (data.polishCount / 150) * 100); // 150回磨いたら満点
   
-  let hardness = Math.round((timeScore * 0.3) + (distanceScore * 0.3) + (polishScore * 0.4));
+  let hardness = Math.round((timeScore * 0.25) + (distanceScore * 0.25) + (polishScore * 0.5));
 
   // 3. 屈折率 (Refractive): 多角的な視点、迷いやすさ・好奇心
   // カラー変更回数、クリック数が多いほど多角的に物事を見ている
-  const colorChangeScore = Math.min(100, data.colorChangeCount * 2);
-  const clickFactorR = Math.min(100, data.clickCount * 4);
-  const refractive = Math.round((colorChangeScore * 0.7) + (clickFactorR * 0.3));
+  const colorChangeScore = Math.min(100, data.colorChangeCount * 4);
+  const clickFactorR = Math.min(100, data.clickCount * 5);
+  const refractive = Math.round((colorChangeScore * 0.6) + (clickFactorR * 0.4));
 
   // 4. 希少性 (Rarity): 変わり者度、極端さ
   // 各パラメータが極端に高いか低い場合、希少性が上がる
@@ -76,12 +78,12 @@ export function calculateParams(data: InteractionData): JewelParams {
   const extremeL = isExtreme(data.finalColor.l);
   
   let anomalyScore = 0;
-  if (timeSeconds > 60 && data.mouseDistance < 1000) anomalyScore += 30; // じーっと考えてる
-  if (timeSeconds < 5 && data.clickCount > 10) anomalyScore += 30; // 狂ったように連打
-  if (data.finalColor.s === 100 && data.finalColor.l === 50) anomalyScore += 20; // 完璧な原色
-  if (data.polishCount > 1000) anomalyScore += 40; // 異常な回数磨いた場合
+  if (timeSeconds > 45 && data.mouseDistance < 800) anomalyScore += 30; // じーっと考えてる
+  if (timeSeconds < 6 && data.clickCount > 8) anomalyScore += 35; // 連打
+  if (data.finalColor.s === 100 && data.finalColor.l === 50) anomalyScore += 20; // 原色
+  if (data.polishCount > 300) anomalyScore += 45; // たくさん磨いたご褒美
 
-  const rarity = Math.min(100, Math.round((extremeH * 0.2 + extremeS * 0.3 + extremeL * 0.3 + anomalyScore)));
+  const rarity = Math.min(100, Math.round((extremeH * 0.2 + extremeS * 0.25 + extremeL * 0.25 + anomalyScore)));
 
   return {
     transparency: clamp(transparency, 0, 100),
@@ -97,21 +99,19 @@ export function calculateParams(data: InteractionData): JewelParams {
 export function matchJewel(userParams: JewelParams, finalColor: { h: number, s: number, l: number }): AnalysisResult {
   // 1. メイン宝石とサブ宝石の決定 (ユークリッド距離 + 色距離)
   let distances = jewels.map(jewel => {
-    let rarityPenalty = 0;
-    if (jewel.idealParams.rarity > userParams.rarity) {
-       rarityPenalty = (jewel.idealParams.rarity - userParams.rarity) * 2.5; // ペナルティ倍率強化
-    }
+    // 4つの属性すべてを調和させるために4次元のパラメータ空間で距離を算出
+    const paramDist = Math.sqrt(
+      Math.pow(jewel.idealParams.transparency - userParams.transparency, 1.8) +
+      Math.pow(jewel.idealParams.hardness - userParams.hardness, 1.8) +
+      Math.pow(jewel.idealParams.refractive - userParams.refractive, 1.8) +
+      Math.pow(jewel.idealParams.rarity - userParams.rarity, 1.8)
+    );
 
     const jewelHsl = hexToHsl(jewel.hexColor);
     const colorDist = colorDistance(finalColor, jewelHsl);
 
-    const paramDist = Math.sqrt(
-      Math.pow(jewel.idealParams.transparency - userParams.transparency, 2) +
-      Math.pow(jewel.idealParams.hardness - userParams.hardness, 2) +
-      Math.pow(jewel.idealParams.refractive - userParams.refractive, 2)
-    );
-
-    const dist = paramDist + rarityPenalty + (colorDist * 0.6); // 色距離を強く反映
+    // 色へのマッチングとパラメータとの総合距離
+    const dist = paramDist + (colorDist * 0.7);
     return { jewel, dist };
   });
 
@@ -120,15 +120,22 @@ export function matchJewel(userParams: JewelParams, finalColor: { h: number, s: 
   
   let bestMatch = distances[0].jewel;
   let secondMatch = distances[1].jewel;
-  let hiddenMatch: JewelResult;
+  
+  // メインとサブが絶対に被らないようにする
+  if (secondMatch.id === bestMatch.id) {
+    secondMatch = distances[2].jewel;
+  }
 
-  const seed = userParams.transparency + userParams.hardness + userParams.refractive + userParams.rarity;
-  let highRarityJewels = jewels.filter(j => j.idealParams.rarity >= 70 && j.id !== bestMatch.id && j.id !== secondMatch.id);
+  // 隠し結晶 (Hidden Jewel) の決定
+  // 毎回同じにならないよう、高レアリティ（60以上）の中から、メイン及びサブ以外のものをランダムに決定する！
+  let highRarityJewels = jewels.filter(j => j.idealParams.rarity >= 60 && j.id !== bestMatch.id && j.id !== secondMatch.id);
   if (highRarityJewels.length === 0) {
     highRarityJewels = jewels.filter(j => j.id !== bestMatch.id && j.id !== secondMatch.id);
   }
-  const index = seed % highRarityJewels.length;
-  hiddenMatch = highRarityJewels[index] || jewels[2];
+  
+  // 完全なランダム性
+  const randomIndex = Math.floor(Math.random() * highRarityJewels.length);
+  const hiddenMatch = highRarityJewels[randomIndex] || jewels[2];
 
   return {
     mainJewel: bestMatch,

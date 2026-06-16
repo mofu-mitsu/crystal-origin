@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { motion } from 'motion/react';
 import { InteractionData } from '../types';
 import { Disc, MousePointerClick } from 'lucide-react';
+import { SoundManager } from '../lib/sound';
 
 interface InteractionScreenProps {
   onComplete: (data: Omit<InteractionData, 'polishTimeMs' | 'polishCount'>) => void;
@@ -60,6 +61,8 @@ export default function InteractionScreen({ onComplete }: InteractionScreenProps
 
   const handleClick = () => {
     clickCount.current += 1;
+    // タップ効果音を再生
+    SoundManager.playClick();
     // クリックするたびに彩度が変化
     setS(prev => (prev + 20) > 100 ? 20 : prev + 20);
   };

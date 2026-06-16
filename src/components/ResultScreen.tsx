@@ -13,6 +13,7 @@ interface ResultScreenProps {
 export default function ResultScreen({ result, onRetry }: ResultScreenProps) {
   const { mainJewel, subJewel, hiddenJewel, userParams } = result;
   const resultRef = useRef<HTMLDivElement>(null);
+  const captureRef = useRef<HTMLDivElement>(null); // 隠しキャプチャ用
   const fetchedRef = useRef(false);
   const [isExporting, setIsExporting] = useState(false);
   const [stats, setStats] = useState<{ total: number, match1: number, match2: number, match3: number } | null>(null);
@@ -52,26 +53,30 @@ export default function ResultScreen({ result, onRetry }: ResultScreenProps) {
   }, [mainJewel.id, subJewel.id, hiddenJewel.id]);
 
   const handleDownload = async () => {
-    if (!resultRef.current) return;
+    const target = captureRef.current || resultRef.current;
+    if (!target) return;
     setIsExporting(true);
-    // Allow React state update to render isExporting frame and clear backdrop-filters
+    // レンダリング更新を待つ
     await new Promise(resolve => setTimeout(resolve, 300));
     try {
-      const dataUrl = await toPng(resultRef.current, {
+      const dataUrl = await toPng(target, {
         cacheBust: true,
         backgroundColor: '#020617',
-        pixelRatio: 3, // Increase resolution significantly
+        pixelRatio: 2.5, // スマホでも崩れず、非常に高精細な解像度
         style: {
           transform: 'none',
           margin: '0',
-          width: resultRef.current.clientWidth + 'px',
-          height: resultRef.current.clientHeight + 'px',
+          width: '1024px',
+          height: 'auto',
         }
       });
       const a = document.createElement('a');
       a.href = dataUrl;
       a.download = `crystal-origin-${Date.now()}.png`;
       a.click();
+      
+      // 効果音を鳴らす
+      SoundManager.playShine();
     } catch (e) {
       console.error(e);
       alert('画像保存に失敗しました。');
@@ -92,11 +97,19 @@ export default function ResultScreen({ result, onRetry }: ResultScreenProps) {
         console.error(e);
       }
     } else {
-      alert("お使いのブラウザは共有機能に対応していません。\n画像保存をご利用ください！");
+      // 共有に非対応の場合でも、クリップボードへのコピーをおこなって利便性をあげる！
+      try {
+        await navigator.clipboard.writeText(
+          `私の主結晶は【${mainJewel.name}】でした。\nあなたの内なる原石は？\n#クリスタルオリジン #わたしを紐解く宝石診断\n${window.location.href}`
+        );
+        alert("診断結果をクリップボードにコピーしました！\nSNSなどに貼り付けてシェアしてください。");
+      } catch {
+        alert("お使いのブラウザは共有機能に対応していません。\n画像保存をご利用ください！");
+      }
     }
   };
 
-  const renderBar = (label: string, value: number, max: number = 100) => {
+  const renderBar = (label: string, value: number, max: number = 100, isCapture = false) => {
     const blockCount = 10;
     const filledBlocks = Math.round((value / max) * blockCount);
     
@@ -110,7 +123,11 @@ export default function ResultScreen({ result, onRetry }: ResultScreenProps) {
           {Array.from({ length: blockCount }).map((_, i) => (
             <div 
               key={i} 
-              className={`h-2 flex-1 rounded-sm transition-all duration-500 ${i < filledBlocks ? 'bg-indigo-400/90 shadow-[0_0_8px_rgba(129,140,248,0.5)]' : 'bg-slate-800'}`}
+              className={`h-2 flex-1 rounded-sm transition-all duration-500 ${
+                i < filledBlocks 
+                  ? (isCapture ? 'bg-indigo-400' : 'bg-indigo-400/90 shadow-[0_0_8px_rgba(129,140,248,0.5)]') 
+                  : 'bg-slate-800'
+              }`}
             />
           ))}
         </div>
@@ -118,11 +135,11 @@ export default function ResultScreen({ result, onRetry }: ResultScreenProps) {
     );
   };
 
-  const JewelCard = ({ title, jewel, isMain = false }: { title: string, jewel: JewelResult, isMain?: boolean }) => (
+  const JewelCard = ({ title, jewel, isMain = false, isCapture = false }: { title: string, jewel: JewelResult, isMain?: boolean, isCapture?: boolean }) => (
     <div
       className={`relative p-6 rounded-2xl border ${
-        isExporting
-          ? (isMain ? 'border-indigo-500 bg-[#0f172a]' : 'border-slate-800 bg-[#0f172a]')
+        isCapture
+          ? (isMain ? 'border-indigo-500/80 bg-[#0f172a]' : 'border-slate-800 bg-[#0c1222]')
           : (isMain ? 'border-indigo-500/60 shadow-[0_0_25px_rgba(99,102,241,0.35)] bg-slate-800/70 backdrop-blur-xl' : 'border-slate-700/80 shadow-md bg-slate-800/30 backdrop-blur-xl')
       } overflow-hidden ${isMain ? 'md:col-span-2' : ''}`}
     >
@@ -162,7 +179,8 @@ export default function ResultScreen({ result, onRetry }: ResultScreenProps) {
         </a>
       </div>
 
-      <div ref={resultRef} className="p-4 sm:p-8 bg-slate-950 rounded-3xl overflow-hidden">
+      {/* 通常の表示用コンテナ (画面幅に追従) */}
+      <div ref={resultRef} className="p-4 sm:p-8 bg-slate-950 rounded-3xl overflow-hidden border border-slate-900/60 shadow-2xl">
         <div className="flex items-center justify-center gap-8 mb-12 border-b border-slate-800/60 pb-8">
           <Sparkles className="w-5 h-5 text-indigo-400 animate-pulse" />
           <h1 className="text-xl md:text-2xl tracking-[0.4em] font-light text-slate-100 drop-shadow-[0_0_12px_rgba(255,255,255,0.4)]">鑑定結果</h1>
@@ -209,15 +227,76 @@ export default function ResultScreen({ result, onRetry }: ResultScreenProps) {
             </div>
           </div>
         </div>
-        
-        {isExporting && (
-          <div className="text-center text-xs text-slate-500 pt-8 border-t border-slate-800/50 font-mono tracking-widest">
-            CRYSTAL ORIGIN 〜わたしを紐解く宝石診断〜
-          </div>
-        )}
       </div>
 
-      {!isExporting && <JewelRecommendation jewelName={mainJewel.name} />}
+      {/* ========================================================= */}
+      {/* 隠しキャプチャ専用コンテナ (常に1024px幅の横長デスクトップ配置をキープ) */}
+      {/* ========================================================= */}
+      <div className="absolute left-[-9999px] top-0 pointer-events-none" style={{ width: '1024px' }}>
+        <div 
+          ref={captureRef} 
+          className="p-8 bg-slate-950 rounded-3xl overflow-hidden border border-slate-900"
+          style={{ width: '1024px', boxSizing: 'border-box' }}
+        >
+          <div className="flex items-center justify-center gap-8 mb-12 border-b border-slate-800 pb-8">
+            <Sparkles className="w-5 h-5 text-indigo-400" />
+            <h1 className="text-2xl tracking-[0.4em] font-light text-slate-100">鑑定結果</h1>
+            <Sparkles className="w-5 h-5 text-indigo-400" />
+          </div>
+
+          {/* 強制3カラム配置 */}
+          <div className="grid grid-cols-3 gap-6 mb-8 w-full">
+            <div className="col-span-2 grid grid-cols-2 gap-6">
+              {/* PC表示用の横並びカード */}
+              <JewelCard title="主結晶 (MAIN CRYSTAL)" jewel={mainJewel} isMain={true} isCapture={true} />
+              <div className="flex flex-col gap-6">
+                <JewelCard title="副結晶 (SUB CRYSTAL)" jewel={subJewel} isCapture={true} />
+                <JewelCard title="隠し結晶 (HIDDEN CRYSTAL)" jewel={hiddenJewel} isCapture={true} />
+              </div>
+            </div>
+            
+            <div className="flex flex-col gap-6 col-span-1">
+              <div className="p-6 rounded-2xl border border-slate-800 bg-[#0c1222]">
+                <p className="text-[10px] tracking-widest text-slate-500 mb-6 font-mono border-b border-slate-800 pb-2">解析パラメータ</p>
+                {renderBar("透明度 / 素直さ", userParams.transparency, 100, true)}
+                {renderBar("硬度 / タフさ", userParams.hardness, 100, true)}
+                {renderBar("屈折率 / 多角視点", userParams.refractive, 100, true)}
+                {renderBar("希少性 / 独自性", userParams.rarity, 100, true)}
+              </div>
+              
+              <div className="p-6 rounded-2xl border border-indigo-900/30 bg-[#0f112c] flex flex-col items-center justify-center text-center">
+                <p className="text-[10px] tracking-widest text-indigo-400/60 mb-4 font-mono uppercase">世界との共鳴度</p>
+                {stats ? (
+                  <div className="text-[11px] text-slate-300 font-light leading-relaxed space-y-2 w-full">
+                    <div className="flex justify-between items-center px-2">
+                      <span>主結晶が同じ人</span>
+                      <span className="font-medium text-indigo-300 text-sm">{stats.match1} 人</span>
+                    </div>
+                    <div className="flex justify-between items-center px-2">
+                      <span>主と副が同じ人</span>
+                      <span className="font-medium text-indigo-300 text-sm">{stats.match1} 人</span>
+                    </div>
+                    <div className="flex justify-between items-center px-2 border-b border-indigo-900/30 pb-3 mb-2">
+                      <span>3種類すべて同じ人</span>
+                      <span className="font-medium text-indigo-300 text-sm">{stats.match3} 人</span>
+                    </div>
+                    <p className="opacity-60 text-[10px] pt-1 mt-2">総鑑定人数：{stats.total}人</p>
+                  </div>
+                ) : (
+                  <p className="text-xs text-slate-500 py-8">統計データを同期中...</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center text-[10px] text-slate-600 pt-8 border-t border-slate-900/50 font-mono tracking-widest uppercase">
+            CRYSTAL ORIGIN 〜わたしを紐解く宝石診断〜
+          </div>
+        </div>
+      </div>
+      {/* ========================================================= */}
+
+      <JewelRecommendation jewelName={mainJewel.name} />
 
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-slate-950 via-slate-950 to-transparent flex justify-center gap-4 z-20">
         <button
@@ -233,7 +312,7 @@ export default function ResultScreen({ result, onRetry }: ResultScreenProps) {
           className="flex items-center gap-2 px-6 py-3 text-sm tracking-widest text-slate-300 hover:text-white border border-slate-700 hover:border-slate-500 bg-slate-900 rounded-full transition-colors duration-300"
         >
           <Download className="w-4 h-4" />
-          <span>画像保存</span>
+          <span>{isExporting ? '画像を生成中...' : '画像保存'}</span>
         </button>
         <button
           onClick={onRetry}

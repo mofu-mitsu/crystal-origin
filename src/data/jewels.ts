@@ -783,5 +783,14 @@ export const jewels: JewelResult[] = [
     idealParams: { transparency: 40, hardness: 50, refractive: 80, rarity: 95 },
     colorType: "brownred",
     hexColor: "#8B4513"
+  },
+  {
+    id: "pinkdiamond",
+    name: "ピンクダイヤモンド",
+    subtitle: "神が授けし奇跡の華",
+    description: "ダイヤモンドの圧倒的な強さと、世界中に熱狂をもたらす最高峰の希少性をあわせ持つ完璧な存在。誇り高く、かつ息をのむほど美しく周囲を魅了し進む圧倒的な主役タイプです。",
+    idealParams: { transparency: 100, hardness: 100, refractive: 95, rarity: 100 },
+    colorType: "pink",
+    hexColor: "#FFB7C5"
   }
 ];

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, useAnimation } from 'motion/react';
 import { Sparkles, Pickaxe } from 'lucide-react';
 import { InteractionData } from '../types';
+import { SoundManager } from '../lib/sound';
 
 interface PolishingScreenProps {
   initialData: Omit<InteractionData, 'polishTimeMs' | 'polishCount'>;
@@ -28,6 +29,9 @@ export default function PolishingScreen({ initialData, onComplete }: PolishingSc
       if (dist > 20) {
         setPolishCount(prev => prev + 1);
         lastPos.current = { x: e.clientX, y: e.clientY };
+        
+        // お磨きSEを再生（シンセサイザー）
+        SoundManager.playPolish();
         
         // 石を揺らすアニメーション
         crystalControls.start({
