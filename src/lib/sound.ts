@@ -13,8 +13,8 @@ class SoundManagerClass {
   private bgmChords: number[][] = [
     [130.81, 195.99, 261.63, 329.63, 493.88, 587.33], // Cmaj9 (C3, G3, C4, E4, B4, D5)
     [110.00, 164.81, 220.00, 293.66, 349.23, 440.00], // Am9/F (F, C, A, D, E, A)
-    [174.61, 261.63, 349.23, 440.00, 523.25, 659.25], // Fmaj9 (F3, C4, F4, A4, C5, E5)
-    [146.83, 220.00, 293.66, 392.00, 440.00, 587.33]  // G11 (G3, D4, G4, B4, D5, A5)
+    [174.61, 261.63, 329.63, 392.00, 440.00, 523.25], // Fmaj9 (F3, C4, E4, G4, A4, C5)
+    [196.00, 293.66, 349.23, 440.00, 523.25, 659.25]  // G11 (G3, D4, F4, A4, C5, E5)
   ];
 
   constructor() {
@@ -41,14 +41,24 @@ class SoundManagerClass {
     }
   }
 
-  public setMuted(muted: boolean) {
-    this.isMutedState = muted;
+  private async ensureActive(): Promise<boolean> {
     this.init();
-    if (!this.ctx || !this.masterGain) return;
-
+    if (!this.ctx) return false;
     if (this.ctx.state === 'suspended') {
-      this.ctx.resume();
+      try {
+        await this.ctx.resume();
+      } catch (e) {
+        console.error("Failed to resume AudioContext", e);
+        return false;
+      }
     }
+    return true;
+  }
+
+  public async setMuted(muted: boolean) {
+    this.isMutedState = muted;
+    const active = await this.ensureActive();
+    if (!active || !this.masterGain || !this.ctx) return;
 
     const targetVolume = muted ? 0 : 0.48; // 聴き取りやすい、心地よい音量に設定
     this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, this.ctx.currentTime);
@@ -64,13 +74,10 @@ class SoundManagerClass {
   }
 
   // クリック時のきらっとした高音 (三角波 + 短いリリースのきらきらベル音)
-  public playClick() {
-    this.init();
-    if (!this.ctx || this.isMutedState || !this.masterGain) return;
+  public async playClick() {
+    const active = await this.ensureActive();
+    if (!active || this.isMutedState || !this.masterGain || !this.ctx) return;
     try {
-      if (this.ctx.state === 'suspended') {
-        this.ctx.resume();
-      }
       const now = this.ctx.currentTime;
       const osc = this.ctx.createOscillator();
       const gainNode = this.ctx.createGain();
@@ -91,13 +98,10 @@ class SoundManagerClass {
   }
 
   // お磨き中（きゅっきゅという短い、可愛いきらきら感のあるサインスイープ）
-  public playPolish() {
-    this.init();
-    if (!this.ctx || this.isMutedState || !this.masterGain) return;
+  public async playPolish() {
+    const active = await this.ensureActive();
+    if (!active || this.isMutedState || !this.masterGain || !this.ctx) return;
     try {
-      if (this.ctx.state === 'suspended') {
-        this.ctx.resume();
-      }
       const now = this.ctx.currentTime;
       const osc = this.ctx.createOscillator();
       const gainNode = this.ctx.createGain();
@@ -120,13 +124,10 @@ class SoundManagerClass {
   }
 
   // キラキラ感のある完了音
-  public playShine() {
-    this.init();
-    if (!this.ctx || this.isMutedState || !this.masterGain) return;
+  public async playShine() {
+    const active = await this.ensureActive();
+    if (!active || this.isMutedState || !this.masterGain || !this.ctx) return;
     try {
-      if (this.ctx.state === 'suspended') {
-        this.ctx.resume();
-      }
       const now = this.ctx.currentTime;
       // 3音のアルペジオが高速に立ち上がる
       const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
@@ -152,13 +153,10 @@ class SoundManagerClass {
   }
 
   // 結果発表時の、神秘的で豊かで壮大なクリスタルベルチャイム
-  public playResult() {
-    this.init();
-    if (!this.ctx || this.isMutedState || !this.masterGain) return;
+  public async playResult() {
+    const active = await this.ensureActive();
+    if (!active || this.isMutedState || !this.masterGain || !this.ctx) return;
     try {
-      if (this.ctx.state === 'suspended') {
-        this.ctx.resume();
-      }
       const now = this.ctx.currentTime;
       // 美しい響きのGmaj9和音
       const rootChords = [195.99, 293.66, 369.99, 440.00, 587.33, 739.99, 880.00]; // G3, D4, F#4, A4, D5, F#5, A5
@@ -185,7 +183,6 @@ class SoundManagerClass {
       });
     } catch {}
   }
-
   public startBGM() {
     this.init();
     if (this.isMutedState) return;

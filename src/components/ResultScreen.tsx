@@ -17,6 +17,7 @@ export default function ResultScreen({ result, onRetry, preloadedStats }: Result
   const captureRef = useRef<HTMLDivElement>(null); // 隠しキャプチャ用
   const fetchedRef = useRef(false);
   const [isExporting, setIsExporting] = useState(false);
+  const exportingRef = useRef(false);
   const [stats, setStats] = useState<{ total: number, match1: number, match2: number, match3: number } | null>(preloadedStats);
 
   useEffect(() => {
@@ -61,7 +62,8 @@ export default function ResultScreen({ result, onRetry, preloadedStats }: Result
 
   const handleDownload = async () => {
     const target = captureRef.current;
-    if (!target) return;
+    if (!target || exportingRef.current) return;
+    exportingRef.current = true;
     setIsExporting(true);
     // レンダリング更新を待つ
     await new Promise(resolve => setTimeout(resolve, 350));
@@ -88,7 +90,11 @@ export default function ResultScreen({ result, onRetry, preloadedStats }: Result
         a.click();
         
         // 効果音を鳴らす
-        SoundManager.playShine();
+        try {
+          SoundManager.playShine();
+        } catch (soundErr) {
+          console.warn("Sound effect could not be played smoothly", soundErr);
+        }
       } else {
         throw new Error("Generated image content is blank");
       }
@@ -96,6 +102,7 @@ export default function ResultScreen({ result, onRetry, preloadedStats }: Result
       console.error("Download failed to generate image smoothly", e);
       alert('画像の生成に必要なデータの処理がタイムアウトしたか、ブラウザのセキュリティ設定により制限された可能性があります。画像が写真フォルダに保存されていない場合は、お手数ですが通常の画面表示のままスクリーンショットを撮影して保存してください！');
     } finally {
+      exportingRef.current = false;
       setIsExporting(false);
     }
   };
@@ -221,18 +228,24 @@ export default function ResultScreen({ result, onRetry, preloadedStats }: Result
             <div className="p-6 rounded-2xl border border-indigo-900/30 bg-indigo-950/20 flex flex-col items-center justify-center text-center">
               <p className="text-[10px] tracking-widest text-indigo-400/60 mb-4 font-mono uppercase">世界との共鳴度</p>
               {stats ? (
-                <div className="text-[11px] text-slate-300 font-light leading-relaxed space-y-2 w-full">
+                <div className="text-[11px] text-slate-300 font-light leading-relaxed space-y-2.5 w-full">
                   <div className="flex justify-between items-center px-2">
-                    <span>主結晶が同じ人</span>
-                    <span className="font-medium text-indigo-300 text-sm">{stats.match1} <span className="text-[10px] text-slate-500 font-normal">人</span></span>
+                    <span className="flex items-center gap-1">主結晶が同じ人 <span className="text-[9px] text-slate-500 font-normal font-sans">(あなた除く)</span></span>
+                    <span className="font-medium text-indigo-300 text-sm">{Math.max(0, stats.match1 - 1)} <span className="text-[10px] text-slate-500 font-normal">人</span></span>
                   </div>
                   <div className="flex justify-between items-center px-2">
-                    <span>主と副が同じ人</span>
-                    <span className="font-medium text-indigo-300 text-sm">{stats.match2} <span className="text-[10px] text-slate-500 font-normal">人</span></span>
+                    <span className="flex items-center gap-1">主と副が同じ人 <span className="text-[9px] text-slate-500 font-normal font-sans">(あなた除く)</span></span>
+                    <span className="font-medium text-indigo-300 text-sm">{Math.max(0, stats.match2 - 1)} <span className="text-[10px] text-slate-500 font-normal">人</span></span>
                   </div>
                   <div className="flex justify-between items-center px-2 border-b border-indigo-900/30 pb-3 mb-2">
-                    <span>3種類すべて同じ人</span>
-                    <span className="font-medium text-indigo-300 text-sm">{stats.match3} <span className="text-[10px] text-slate-500 font-normal">人</span></span>
+                    <span className="flex items-center gap-1">3種類すべて同じ人 <span className="text-[9px] text-slate-500 font-normal font-sans">(あなた除く)</span></span>
+                    <span className="font-medium text-indigo-300 text-sm">
+                      {stats.match3 - 1 <= 0 ? (
+                        <span className="text-pink-400 font-semibold animate-pulse tracking-wide">あなただけ！</span>
+                      ) : (
+                        <span>{stats.match3 - 1} <span className="text-[10px] text-slate-500 font-normal">人</span></span>
+                      )}
+                    </span>
                   </div>
                   <p className="opacity-60 text-[10px] pt-1 mt-2">総鑑定人数：{stats.total}人</p>
                 </div>
@@ -285,18 +298,24 @@ export default function ResultScreen({ result, onRetry, preloadedStats }: Result
               <div className="p-6 rounded-2xl border border-indigo-900/30 bg-[#0f112c] flex flex-col items-center justify-center text-center">
                 <p className="text-[10px] tracking-widest text-indigo-400/60 mb-4 font-mono uppercase">世界との共鳴度</p>
                 {stats ? (
-                  <div className="text-[11px] text-slate-300 font-light leading-relaxed space-y-2 w-full">
+                  <div className="text-[11px] text-slate-300 font-light leading-relaxed space-y-2.5 w-full">
                     <div className="flex justify-between items-center px-2">
-                      <span>主結晶が同じ人</span>
-                      <span className="font-medium text-indigo-300 text-sm">{stats.match1} 人</span>
+                      <span>主結晶が同じ人 <span className="text-[9px] text-slate-500 font-normal font-sans">(あなた除く)</span></span>
+                      <span className="font-medium text-indigo-300 text-sm">{Math.max(0, stats.match1 - 1)} 人</span>
                     </div>
                     <div className="flex justify-between items-center px-2">
-                      <span>主と副が同じ人</span>
-                      <span className="font-medium text-indigo-300 text-sm">{stats.match2} 人</span>
+                      <span>主と副が同じ人 <span className="text-[9px] text-slate-500 font-normal font-sans">(あなた除く)</span></span>
+                      <span className="font-medium text-indigo-300 text-sm">{Math.max(0, stats.match2 - 1)} 人</span>
                     </div>
                     <div className="flex justify-between items-center px-2 border-b border-indigo-900/30 pb-3 mb-2">
-                      <span>3種類すべて同じ人</span>
-                      <span className="font-medium text-indigo-300 text-sm">{stats.match3} 人</span>
+                      <span>3種類すべて同じ人 <span className="text-[9px] text-slate-500 font-normal font-sans">(あなた除く)</span></span>
+                      <span className="font-medium text-indigo-300 text-sm">
+                        {stats.match3 - 1 <= 0 ? (
+                          <span className="text-pink-400 font-semibold tracking-wide">あなただけ！</span>
+                        ) : (
+                          `${stats.match3 - 1} 人`
+                        )}
+                      </span>
                     </div>
                     <p className="opacity-60 text-[10px] pt-1 mt-2">総鑑定人数：{stats.total}人</p>
                   </div>
