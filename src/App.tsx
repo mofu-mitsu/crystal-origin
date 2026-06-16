@@ -2,7 +2,7 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { AnimatePresence } from 'motion/react';
 import { Volume2, VolumeX } from 'lucide-react';
 import StartScreen from './components/StartScreen';
@@ -21,6 +21,7 @@ export default function App() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [isMuted, setIsMuted] = useState(true);
   const [stats, setStats] = useState<{ total: number, match1: number, match2: number, match3: number } | null>(null);
+  const fetchingRef = useRef(false);
 
   // 初回ロードなどの効果音処理と、ユーザーアクションでのWeb Audioロック解除
   useEffect(() => {
@@ -44,6 +45,8 @@ export default function App() {
   }, []);
 
   const preloadStats = async (mainId: string, subId: string, hiddenId: string) => {
+    if (fetchingRef.current) return;
+    fetchingRef.current = true;
     try {
       const gasUrl = (import.meta as any).env?.VITE_GAS_URL || "https://script.google.com/macros/s/AKfycbwE4WxRj8N7aTQOM-OTUQuXT0jnOqIqhRKOgFrFsO1jhcQU2S-XPn-v1qzhAhMb6TWP/exec";
       if (!gasUrl) {
@@ -118,6 +121,7 @@ export default function App() {
     setInteractData(null);
     setResult(null);
     setStats(null); // ロード済みのキャッシュ統計をクリア
+    fetchingRef.current = false;
     setScreen('start');
   };
 
