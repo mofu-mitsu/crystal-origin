@@ -453,7 +453,7 @@ export const jewels: JewelResult[] = [
   },
   {
     id: "sardonyx",
-    name: "サードオニクス",
+    name: "サードニクス（サードオニキス）",
     subtitle: "絆を深める夫婦の和",
     description: "人との繋がりや和を何よりも大切にします。チームワークを重んじ、コミュニケーションを円滑にして、人間関係を良好に保つ温かな才能があります。",
     idealParams: { transparency: 30, hardness: 65, refractive: 40, rarity: 40 },
@@ -792,5 +792,203 @@ export const jewels: JewelResult[] = [
     idealParams: { transparency: 100, hardness: 100, refractive: 95, rarity: 100 },
     colorType: "pink",
     hexColor: "#FFB7C5"
+  },
+  {
+    id: "coal",
+    name: "コール（石炭）",
+    subtitle: "静かに燃えあがる無限の熱源",
+    description: "外見は無骨ですが、内側には強烈なエネルギーとポテンシャルを秘めています。どんな逆境でも燃え上がり、周囲を力強く温める熱い心を持っています。",
+    idealParams: { transparency: 0, hardness: 20, refractive: 10, rarity: 10 },
+    colorType: "black",
+    hexColor: "#2C2C2C"
+  },
+  {
+    id: "blueapatite",
+    name: "ブルーアパタイト",
+    subtitle: "迷いを打ち砕く真実の青",
+    description: "自己主張をしっかり持ち、コミュニケーションを通じて周囲の迷いを晴らす強さがあります。自己を表現する力に優れ、人を正しい道に導く力を持っています。",
+    idealParams: { transparency: 50, hardness: 50, refractive: 65, rarity: 50 },
+    colorType: "blue",
+    hexColor: "#007BA7"
+  },
+  {
+    id: "watermelontourmaline",
+    name: "ウォーターメロントルマリン",
+    subtitle: "二面性を楽しむスイカの笑顔",
+    description: "赤と緑の全く違う色が共存するように、相反する二つの才能や感情を自分の中で完璧に統合させています。陽気で個性的な魅力が人を惹きつけます。",
+    idealParams: { transparency: 60, hardness: 75, refractive: 80, rarity: 75 },
+    colorType: "multi",
+    hexColor: "#FF6B8B"
+  },
+  {
+    id: "rhodolitegarnet",
+    name: "ロードライトガーネット",
+    subtitle: "バラのように芳醇な実りの光",
+    description: "努力を惜しまず、着実に豊かな成果を引き寄せる力があります。華やかさと深い落ち着きを併せ持ち、実りある人生を自らの手で切り開くタイプです。",
+    idealParams: { transparency: 65, hardness: 75, refractive: 80, rarity: 60 },
+    colorType: "pinkpurple",
+    hexColor: "#C34A7B"
+  },
+  {
+    id: "cherryquartz",
+    name: "チェリークォーツ",
+    subtitle: "好奇心弾けるサクラ色の果実",
+    description: "明るく元気で、いつも前向きなエネルギーを発散しています。新しいことへの好奇心が旺盛で、みんなを笑顔にさせるムードメーカーです。",
+    idealParams: { transparency: 50, hardness: 65, refractive: 55, rarity: 40 },
+    colorType: "pink",
+    hexColor: "#FFB0C2"
+  },
+  {
+    id: "moissanite",
+    name: "モアサナイト",
+    subtitle: "星から舞い降りた不屈の輝き",
+    description: "ダイヤモンドをも凌ぐ輝きを放ちながら、困難に対して決して折れない強さを持っています。宇宙由来の隕石の如く、常識にとらわれないスケール感の持ち主です。",
+    idealParams: { transparency: 95, hardness: 95, refractive: 100, rarity: 80 },
+    colorType: "white",
+    hexColor: "#F5FFFA"
+  },
+  {
+    id: "lepidolite",
+    name: "レピドライト",
+    subtitle: "変革を受け入れる紫の鱗",
+    description: "人生の転換期を恐れず、むしろ変化の波を乗りこなす柔軟性を持っています。深い精神性とリラックス効果で、周囲のストレスを和らげる存在です。",
+    idealParams: { transparency: 20, hardness: 30, refractive: 40, rarity: 45 },
+    colorType: "purple",
+    hexColor: "#D8BFD8"
+  },
+  {
+    id: "orthoclase",
+    name: "オーソクレース",
+    subtitle: "目標を定めるブレない意志",
+    description: "直角に割れる性質のように、物事に対して道筋を立て、まっすぐに目標へ進む論理的な思考を持っています。冷静な判断で組織を支えます。",
+    idealParams: { transparency: 40, hardness: 60, refractive: 50, rarity: 50 },
+    colorType: "yellow",
+    hexColor: "#FFFACD"
+  },
+  {
+    id: "pyrite",
+    name: "パイライト",
+    subtitle: "火花を散らす黄金の盾",
+    description: "叩けば火花を散らす石のように、困難にぶつかるほど強いエネルギーを発揮します。圧倒的な行動力と意志の強さで、道を塞ぐあらゆる壁を打ち砕きます。",
+    idealParams: { transparency: 0, hardness: 60, refractive: 10, rarity: 40 },
+    colorType: "gold",
+    hexColor: "#D4AF37"
+  },
+  {
+    id: "howlite",
+    name: "ハウライト",
+    subtitle: "怒りを鎮める純白の大自然",
+    description: "清らかな白い姿のように、燃え上がる感情や怒りを鎮め、深い静寂に導く力があります。客観的な視野から物事を見つめ、正しい選択をする知性派です。",
+    idealParams: { transparency: 0, hardness: 35, refractive: 20, rarity: 30 },
+    colorType: "white",
+    hexColor: "#ECECEC"
+  },
+  {
+    id: "hackmanite",
+    name: "ハックマナイト",
+    subtitle: "光で記憶を刻む変化の紫",
+    description: "紫外線を浴びると色を変え、時間が経つとまた戻るという不思議な力を持っています。その場の空気に合わせて自分を変化させ、多様な経験を吸収する柔軟性があります。",
+    idealParams: { transparency: 30, hardness: 55, refractive: 45, rarity: 85 },
+    colorType: "purple",
+    hexColor: "#B5A6E8"
+  },
+  {
+    id: "barite",
+    name: "バライト",
+    subtitle: "大地と深く繋がる重力薔薇",
+    description: "比重が重く、「砂漠の薔薇」ともなる石。物事の本質を重く受け止め、しっかりと地に足をつけて人生を歩む重厚な安定感を持っています。",
+    idealParams: { transparency: 50, hardness: 30, refractive: 60, rarity: 50 },
+    colorType: "clear",
+    hexColor: "#F5F5DC"
+  },
+  {
+    id: "variscite",
+    name: "バリサイト",
+    subtitle: "希望を育む陽気な緑",
+    description: "豊かな感受性と自己表現力に優れ、人を励まし希望を与えるのが得意です。恐れを手放し、自信を持って前に進むポジティブなエネルギーに満ちています。",
+    idealParams: { transparency: 10, hardness: 45, refractive: 30, rarity: 60 },
+    colorType: "green",
+    hexColor: "#3CB371"
+  },
+  {
+    id: "pinkimperialtopaz",
+    name: "ピンクインペリアルトパーズ",
+    subtitle: "愛と誇りを導く帝王のピンク",
+    description: "インペリアルトパーズの中でも特に稀少。揺るぎない自信と誇りに加え、限りなく優しく深い愛を持っています。他者の模範となるような王の気品を備えています。",
+    idealParams: { transparency: 85, hardness: 80, refractive: 75, rarity: 95 },
+    colorType: "pink",
+    hexColor: "#FF6EB4"
+  },
+  {
+    id: "pezzottaite",
+    name: "ペツォッタイト",
+    subtitle: "甘く輝くラズベリーの微笑",
+    description: "見ているだけで元気が出るような、明るくフルーティーな魅力を持っています。一度見たら忘れられないほどの個性派で、多くの人を惹きつける存在です。",
+    idealParams: { transparency: 70, hardness: 80, refractive: 60, rarity: 90 },
+    colorType: "pink",
+    hexColor: "#D63473"
+  },
+  {
+    id: "poudretteite",
+    name: "ポードレッタイト",
+    subtitle: "世界を驚嘆させる極希少の桜",
+    description: "世界で最も希少と言っても過言ではないほどの幻の存在。誰もが認める圧倒なポテンシャルを持ちながらも、儚く美しい桜のような品格を持っています。",
+    idealParams: { transparency: 90, hardness: 65, refractive: 75, rarity: 100 },
+    colorType: "pink",
+    hexColor: "#FFB7C5"
+  },
+  {
+    id: "yooperlite",
+    name: "ユーパーライト",
+    subtitle: "秘めた光を放つ魔法の石",
+    description: "一見ただの石に見えますが、紫外線を当てると燃えるように光り輝きます。普段は実力を隠していますが、いざという時に誰も予想しなかった大活躍を見せるタイプです。",
+    idealParams: { transparency: 0, hardness: 55, refractive: 10, rarity: 75 },
+    colorType: "grey",
+    hexColor: "#808080"
+  },
+  {
+    id: "rhodonite",
+    name: "ロードナイト",
+    subtitle: "行動へ移す友愛の薔薇",
+    description: "胸に秘めた愛を行動として現実世界に表していく力があります。友人や家族に対して非常に愛情深く、実務的なサポートや細やかな気配りがとても得意です。",
+    idealParams: { transparency: 10, hardness: 60, refractive: 40, rarity: 50 },
+    colorType: "red",
+    hexColor: "#CC6883"
+  },
+  {
+    id: "smithsonite",
+    name: "スミソナイト",
+    subtitle: "不安を洗い流すパステル",
+    description: "優しい色合いで、怖れや心の傷を優しく包み込みます。穏やかなコミュニケーションを大切にし、周りの人がふと弱音を吐けるような安心感を与えます。",
+    idealParams: { transparency: 20, hardness: 45, refractive: 50, rarity: 70 },
+    colorType: "cyan",
+    hexColor: "#40E0D0"
+  },
+  {
+    id: "starsapphire",
+    name: "スターサファイア",
+    subtitle: "運命を導く三筋の光",
+    description: "冷静さと知性を極め、そこに「信仰・希望・運命」の光を宿しています。困難な状況でも、目指すべき一点の輝きを見つけ出し、周囲を希望へ導く真のリーダーです。",
+    idealParams: { transparency: 30, hardness: 90, refractive: 60, rarity: 85 },
+    colorType: "blue",
+    hexColor: "#2A52BE"
+  },
+  {
+    id: "scapolite",
+    name: "スキャポライト",
+    subtitle: "依存から抜け出す柱の支え",
+    description: "自立心を促し、古い習慣や依存から脱却するための強い精神的支えとなります。物事を整理して計画的に進める実務能力の高さが特徴です。",
+    idealParams: { transparency: 50, hardness: 60, refractive: 55, rarity: 65 },
+    colorType: "purple",
+    hexColor: "#DDA0DD"
+  },
+  {
+    id: "piemontite",
+    name: "ピーモンタイト",
+    subtitle: "血潮のように力強い情の赤",
+    description: "紅簾石（こうれんせき）の名にふさわしく、非常に強い情と深い愛情の持ち主です。困難な状況においても、人との絆や底力でエネルギッシュに乗り越えていきます。",
+    idealParams: { transparency: 10, hardness: 65, refractive: 30, rarity: 70 },
+    colorType: "darkred",
+    hexColor: "#A52A2A"
   }
 ];
