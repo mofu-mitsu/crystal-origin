@@ -72,7 +72,7 @@ export default function ResultScreen({ result, onRetry, preloadedStats }: Result
           console.warn("Sound effect could not be played smoothly", soundErr);
         }
 
-        setToast({ message: '画像をアルバム/フォルダへダウンロード保存しました！✨', type: 'success' });
+        setToast({ message: '画像のダウンロードを開始しました✨（端末の表示等に従って保存してね）', type: 'success' });
       } else {
         throw new Error("Generated image content is blank");
       }

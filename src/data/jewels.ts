@@ -1095,9 +1095,45 @@ export const jewels: JewelResult[] = [
     name: "キャンディーフローライト",
     subtitle: "発想が踊る魔法の縞模様",
     description: "紫、緑、ピンクなどが入り混じる天才の石。型にはまらない自由な発想力で、次々と面白いアイデアを生み出すクリエイティブな才能に溢れています。",
-    idealParams: { transparency: 65, hardness: 40, refractive: 50, rarity: 50 },
+    idealParams: { transparency: 75, hardness: 35, refractive: 85, rarity: 80 },
     colorType: "multi",
     hexColor: "#DDA0DD"
+  },
+  {
+    id: "tiffanystone",
+    name: "ティファニーストーン",
+    subtitle: "芸術を生み出す直感のマーブル",
+    description: "紫や白の美しい模様が入り混じる、芸術的で直感力の高い石です。自由な発想と高い感性を持ち、固定観念に縛られず新しいものを創り出す力があります。",
+    idealParams: { transparency: 30, hardness: 55, refractive: 60, rarity: 85 },
+    colorType: "purple",
+    hexColor: "#B5A6E8"
+  },
+  {
+    id: "shattuckite",
+    name: "シャッタカイト",
+    subtitle: "真実を語る癒やしの海",
+    description: "海や地球のスピリチュアルな青色を思わせる石。コミュニケーション能力が高く、自らの信念や平和の心を相手の心に響かせる説得力を持っています。",
+    idealParams: { transparency: 15, hardness: 45, refractive: 40, rarity: 75 },
+    colorType: "blue",
+    hexColor: "#10609B"
+  },
+  {
+    id: "sillimanite",
+    name: "シリマナイト",
+    subtitle: "苦難を越える成長の光",
+    description: "光の筋を宿すこともある、強い方向性を持った石。困難な状況でも決してブレない芯の強さを発揮し、逆境をバネにして大きく成長するタフさがあります。",
+    idealParams: { transparency: 60, hardness: 75, refractive: 50, rarity: 65 },
+    colorType: "yellowgreen",
+    hexColor: "#A39E5F"
+  },
+  {
+    id: "gypsum",
+    name: "ジプサム",
+    subtitle: "すべてを包み込む純白の癒やし",
+    description: "非常に脆く柔らかい石ですが、その分人の心の痛みや弱さに寄り添うことができます。無条件の愛と包容力で、周囲に深い安心感を与える存在です。",
+    idealParams: { transparency: 30, hardness: 15, refractive: 25, rarity: 30 },
+    colorType: "white",
+    hexColor: "#F8F8F8"
   },
   {
     id: "azurite",
