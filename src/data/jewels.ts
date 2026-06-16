@@ -155,15 +155,6 @@ export const jewels: JewelResult[] = [
     hexColor: "#B2FFFF"
   },
   {
-    id: "cubiczirconia",
-    name: "キュービックジルコニア",
-    subtitle: "自ら価値を創造する努力",
-    description: "生まれ持った才能に頼るのではなく、後天的な努力と研鑽によって自らを磨き上げました。「本物」かどうかなど関係なく、あなたの努力こそが最高の価値なのです。",
-    idealParams: { transparency: 90, hardness: 80, refractive: 95, rarity: 30 },
-    colorType: "white",
-    hexColor: "#FFFFFF"
-  },
-  {
     id: "sphene",
     name: "スフェーン",
     subtitle: "溢れ出す多色な好奇心",
@@ -1129,8 +1120,8 @@ export const jewels: JewelResult[] = [
   {
     id: "cubiczirconia",
     name: "キュービックジルコニア",
-    subtitle: "完璧を創り出す人工の輝き",
-    description: "人間の手で生み出された、ダイヤモンドにも劣らない輝きを持つ人工石。環境に左右されず、常に安定して高いパフォーマンスを発揮する完璧さを持ちます。",
+    subtitle: "自ら価値を創造する努力",
+    description: "生まれ持った才能に頼るのではなく、後天的な努力と研鑽によって自らを磨き上げました。「本物」かどうかなど関係なく、あなたの努力こそが最高の価値なのです。",
     idealParams: { transparency: 95, hardness: 80, refractive: 90, rarity: 10 },
     colorType: "clear",
     hexColor: "#FFFFFF"
