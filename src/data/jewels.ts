@@ -1197,5 +1197,50 @@ export const jewels: JewelResult[] = [
     idealParams: { transparency: 85, hardness: 85, refractive: 75, rarity: 65 },
     colorType: "yellowgreen",
     hexColor: "#BDB76B"
+  },
+  {
+    id: "londonbluetopaz",
+    name: "ロンドンブルートパーズ",
+    subtitle: "深淵を覗く紺青の知性",
+    description: "夜空や深海を思わせる、深く落ち着いたブルーが特徴の石。感情に流されない冷静な思考力と、物事の本質を深く見極める知性を備えています。",
+    idealParams: { transparency: 85, hardness: 80, refractive: 70, rarity: 60 },
+    colorType: "blue",
+    hexColor: "#2B5F8C"
+  },
+  {
+    id: "bluetopaz",
+    name: "ブルートパーズ",
+    subtitle: "澄み渡る希望の空",
+    description: "よく晴れた青空のように爽やかで明るいエネルギーを持つ石。コミュニケーション能力が高く、周囲を前向きでオープンな空気で包み込む力があります。",
+    idealParams: { transparency: 90, hardness: 80, refractive: 65, rarity: 40 },
+    colorType: "lightblue",
+    hexColor: "#7BC8F6"
+  },
+  {
+    id: "petrifiedwood",
+    name: "ペトリファイドウッド",
+    subtitle: "悠久の時を刻む木の化石",
+    description: "何億年もの時間をかけて木が石化した、大地の記憶を宿す石。どっしりとした安定感があり、焦らず自分のペースで着実に目標に向かっていく忍耐強さを持ちます。",
+    idealParams: { transparency: 5, hardness: 70, refractive: 15, rarity: 65 },
+    colorType: "brown",
+    hexColor: "#8B5A2B"
+  },
+  {
+    id: "bekilybluegarnet",
+    name: "ベキリーブルーガーネット",
+    subtitle: "青から赤へ変わる奇跡の炎",
+    description: "光によって青から赤系の色へと魔法のように色を変える超希少なガーネット。一見クールに見えますが、内面には驚くほど熱い情熱と劇的なエネルギーを秘めています。",
+    idealParams: { transparency: 80, hardness: 75, refractive: 85, rarity: 95 },
+    colorType: "blue",
+    hexColor: "#4B6B8A"
+  },
+  {
+    id: "pinkzoisite",
+    name: "ピンクゾイサイト",
+    subtitle: "ふわりと咲く桜の輝き",
+    description: "タンザナイトと同じ鉱物でありながら、優しく愛らしい桜色を持つ非常に珍しい石。控えめながらも芯のある優しさを持ち、周囲との絆を柔らかく深めていきます。",
+    idealParams: { transparency: 85, hardness: 65, refractive: 75, rarity: 90 },
+    colorType: "pink",
+    hexColor: "#EBB0D7"
   }
 ];

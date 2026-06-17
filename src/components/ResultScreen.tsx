@@ -104,7 +104,7 @@ export default function ResultScreen({ result, onRetry, preloadedStats }: Result
         );
         alert("診断結果をクリップボードにコピーしました！\nSNSなどに貼り付けてシェアしてください。");
       } catch {
-        alert("お使いのブラウザは共有機能に対応していません。\n画像保存をご利用ください！");
+        alert("お使いのブラウザは共有機能に対応していません。\n画像のダウンロードをご利用ください！");
       }
     }
   };
@@ -327,7 +327,7 @@ export default function ResultScreen({ result, onRetry, preloadedStats }: Result
           className="flex items-center gap-2 px-6 py-3 text-sm tracking-widest text-slate-300 hover:text-white border border-slate-700 hover:border-slate-500 bg-slate-900 rounded-full transition-colors duration-300"
         >
           <Download className="w-4 h-4" />
-          <span>{isExporting ? '画像を生成中...' : '画像保存'}</span>
+          <span>{isExporting ? '画像を生成中...' : '画像をダウンロード'}</span>
         </button>
         <button
           onClick={onRetry}

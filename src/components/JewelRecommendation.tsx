@@ -24,18 +24,25 @@ export default function JewelRecommendation({ jewelName }: JewelRecommendationPr
         
         // "(〜)" などの補足表記を消して検索精度を上げる（例：モリオン（黒水晶） -> モリオン）
         const pureName = jewelName.split('（')[0].split('(')[0].trim();
-        let searchKeyword = pureName; // "ジュエリー"で絞ると出ない希少石が多いため、石の直名で広く探す
-        
-        // まずは宝石の直名で検索
+        // まずは「ジュエリー」をつけて検索し、アクセサリー類を優先する
+        let searchKeyword = pureName + " ジュエリー";
         let res = await fetch(`https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?applicationId=${appId}&keyword=${encodeURIComponent(searchKeyword)}&hits=3&format=json&sort=standard`);
         let data = await res.json();
         
-        // ヒットしなかった場合、装飾語を消して再検索（例: キャンディーフローライト -> フローライト）
+        // ジュエリーでヒットしなかった場合、石の直名だけで広く探す（ルースや原石など）
         if (!data.Items || data.Items.length === 0) {
-          const simplifiedName = pureName.replace(/(キャンディー|スター|レインボー|ウォーターメロン|インペリアル|パライバ|バイカラー|ブラック)/g, "");
+          searchKeyword = pureName; 
+          await new Promise(resolve => setTimeout(resolve, 500)); // APIレートリミット対策
+          res = await fetch(`https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?applicationId=${appId}&keyword=${encodeURIComponent(searchKeyword)}&hits=3&format=json&sort=standard`);
+          data = await res.json();
+        }
+
+        // それでもヒットしなかった場合、装飾語を消して再検索（例: キャンディーフローライト -> フローライト）
+        if (!data.Items || data.Items.length === 0) {
+          const simplifiedName = pureName.replace(/(キャンディー|スター|レインボー|ウォーターメロン|インペリアル|パライバ|バイカラー|ブラック|ロンドン)/g, "");
           if (simplifiedName !== pureName && simplifiedName.length > 0) {
             await new Promise(resolve => setTimeout(resolve, 500)); // APIレートリミット対策
-            res = await fetch(`https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?applicationId=${appId}&keyword=${encodeURIComponent(simplifiedName)}&hits=3&format=json&sort=standard`);
+            res = await fetch(`https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?applicationId=${appId}&keyword=${encodeURIComponent(simplifiedName + " ジュエリー")}&hits=3&format=json&sort=standard`);
             data = await res.json();
           }
         }
