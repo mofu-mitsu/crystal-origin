@@ -141,18 +141,18 @@ export const jewels: JewelResult[] = [
     name: "ローズクォーツ",
     subtitle: "傷を包み込む無償の愛",
     description: "自分よりも他人を優先してしまうほどの優しさを持っています。争いを好まず、どんな人にも安心感を与えられる、愛情に満ちた包容力の持ち主です。",
-    idealParams: { transparency: 50, hardness: 55, refractive: 60, rarity: 40 },
+    idealParams: { transparency: 60, hardness: 50, refractive: 65, rarity: 40 },
     colorType: "pink",
-    hexColor: "#FFC0CB"
+    hexColor: "#E8A2B2"
   },
   {
     id: "celestite",
     name: "セレスタイト",
     subtitle: "静寂を愛する深い思索",
     description: "大勢で騒ぐよりも、一人の静かな場所で深く考えることを好みます。精神性が高く、独特の哲学を持っており、周囲からは少し不思議でミステリアスに見られます。",
-    idealParams: { transparency: 95, hardness: 40, refractive: 98, rarity: 75 },
+    idealParams: { transparency: 85, hardness: 35, refractive: 95, rarity: 80 },
     colorType: "lightblue",
-    hexColor: "#B2FFFF"
+    hexColor: "#91C8E8"
   },
   {
     id: "sphene",
@@ -186,9 +186,9 @@ export const jewels: JewelResult[] = [
     name: "ユークレース",
     subtitle: "儚きゆえの美しさ",
     description: "非常に繊細で、環境の変化や他人の何気ない言葉に傷つきやすい一面があります。しかし、その崩れやすさ（脆さ）こそが、あなたの感受性の美しさでもあります。",
-    idealParams: { transparency: 90, hardness: 20, refractive: 75, rarity: 90 },
+    idealParams: { transparency: 95, hardness: 15, refractive: 80, rarity: 95 },
     colorType: "blueclear",
-    hexColor: "#87CEEB"
+    hexColor: "#75BBE8"
   },
   {
     id: "sugilite",
